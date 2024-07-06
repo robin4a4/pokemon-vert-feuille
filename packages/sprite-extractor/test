@@ -1,0 +1,58 @@
+import sharp from "sharp";
+import { promises as fs } from "fs";
+
+async function extractSquares(filePath: string) {
+  const image = sharp(filePath);
+  const metadata = await image.metadata();
+  const { width, height } = metadata;
+
+  if (!width || !height) {
+    throw new Error("Unable to retrieve image dimensions.");
+  }
+
+  const squares: Buffer[] = [];
+
+  for (let y = 0; y < height; y += 16) {
+    for (let x = 0; x < width; x += 16) {
+      const square = await image
+        .extract({ left: x, top: y, width: 16, height: 16 })
+        .toBuffer();
+
+      // Check if the extracted square is not fully transparent
+      const { data } = await sharp(square)
+        .raw()
+        .toBuffer({ resolveWithObject: true });
+      const isTransparent = data.every((value, index) =>
+        index % 4 === 3 ? value === 0 : true
+      );
+
+      if (!isTransparent) {
+        squares.push(square);
+      }
+    }
+  }
+
+  return squares;
+}
+
+async function saveSquares(squares: Buffer[]) {
+  await Promise.all(
+    squares.map((square, index) => {
+      const filePath = `sprites/output/square_${index}.png`;
+      return fs.writeFile(filePath, square);
+    })
+  );
+}
+
+async function main() {
+  const imagePath = "sprites/source/test-2-2.png"
+  try {
+    const squares = await extractSquares(imagePath);
+    await saveSquares(squares);
+    console.log(`Extracted and saved ${squares.length} squares.`);
+  } catch (error: any) {
+    console.error(`Error: ${error.message}`);
+  }
+}
+
+main();
