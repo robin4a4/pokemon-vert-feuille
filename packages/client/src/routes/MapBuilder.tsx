@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Frame, GroupBox, MenuList, MenuListItem, Slider } from "react95";
 
 const CELL_SIZE = 18;
@@ -9,6 +9,26 @@ export function MapBuilder() {
   const grid = Array.from({ length: size.rows }, () =>
     Array(size.cols).fill(0)
   );
+
+  const [sprites, setSprites] = useState([]);
+
+  useEffect(() => {
+    const importAllSprites = async () => {
+      const spriteModules = import.meta.glob(
+        "../assets/sprites/*.{png,jpg,jpeg,svg}"
+      );
+      const spritePromises = Object.values(spriteModules).map((importSprite) =>
+        importSprite()
+      );
+      const importedSprites = await Promise.all(spritePromises);
+      setSprites(importedSprites.map((mod) => mod.default));
+    };
+
+    importAllSprites();
+  }, []);
+
+  console.log(sprites);
+
   return (
     <div
       className="flex flex-col justify-between gap-4 items-center"
@@ -47,21 +67,15 @@ export function MapBuilder() {
       </Frame>
       <div className="relative">
         <MenuList inline style={{ width: 700 }}>
-          <MenuListItem square>
-            <span role="img" aria-label="😎">
-              😎
-            </span>
-          </MenuListItem>
-          <MenuListItem square>
-            <span role="img" aria-label="🤖">
-              🤖
-            </span>
-          </MenuListItem>
-          <MenuListItem square>
-            <span role="img" aria-label="🎁">
-              🎁
-            </span>
-          </MenuListItem>
+          {sprites.splice(0, 20).map((sprite, i) => (
+            <MenuListItem key={i}>
+              <img
+                src={sprite}
+                alt={`sprite-${i}`}
+                style={{ minWidth: CELL_SIZE, height: CELL_SIZE }}
+              />
+            </MenuListItem>
+          ))}
         </MenuList>
         <Frame
           style={{
