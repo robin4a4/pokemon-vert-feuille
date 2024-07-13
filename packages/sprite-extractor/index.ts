@@ -107,6 +107,7 @@ const extractShapes = async (imagePath: string, outputDir: string) => {
     const outputPath = path.join(outputDir, `sprite-${spriteCount + 1}.png`);
 
     await sharp(buffer).resize(16, 16).toFile(outputPath);
+    spriteCount++;
   }
 };
 
