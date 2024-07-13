@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 
 import { styleReset } from "react95";
 import { createGlobalStyle, ThemeProvider } from "styled-components";
+import "./main.css";
 
 /* Pick a theme of your choice */
 import original from "react95/dist/themes/original";
