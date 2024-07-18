@@ -42,6 +42,27 @@ export function MapBuilder() {
     });
   };
 
+  const handleDrag = (ev: SyntheticEvent & { buttons: number }) => {
+    const isDragging = ev.buttons > 0;
+    if (!isDragging) return;
+    const target = ev.target as HTMLButtonElement;
+    if (!selectedSprite) return;
+
+    const currentSprite = target.dataset.sprite;
+    const row = parseInt(target.dataset.row as string);
+    const col = parseInt(target.dataset.col as string);
+
+    if (!row || !col) return;
+
+    setGrid((prevGrid) => {
+      const newGrid = [...prevGrid];
+      newGrid[row][col] = {
+        sprite: currentSprite ? null : selectedSprite,
+      };
+      return newGrid;
+    });
+  };
+
   return (
     <div
       className="flex flex-col justify-between gap-4 items-center"
@@ -62,6 +83,7 @@ export function MapBuilder() {
           style={{
             gridTemplateColumns: `repeat(${size.rows}, ${CELL_SIZE}px)`,
           }}
+          onPointerMove={handleDrag}
         >
           {grid.map((col, i) =>
             col.map((row, j) => (
