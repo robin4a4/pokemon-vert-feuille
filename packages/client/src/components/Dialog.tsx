@@ -1,7 +1,7 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { PropsWithChildren } from "react";
 import { Button, Window, WindowContent, WindowHeader } from "react95";
-import { motion } from "framer-motion";
+import { motion, useDragControls } from "framer-motion";
 
 export const DialogRoot = Dialog.Root;
 export const DialogTrigger = Dialog.Trigger;
@@ -10,6 +10,11 @@ export function DialogContent({
   title,
   ...props
 }: PropsWithChildren<{ title: string } & Dialog.DialogContentProps>) {
+  const dragControls = useDragControls();
+
+  function startDrag(event: React.PointerEvent) {
+    dragControls.start(event, { snapToCursor: true });
+  }
   return (
     <Dialog.Portal>
       <Dialog.Content
@@ -21,9 +26,17 @@ export function DialogContent({
           transform: "translate(-50%, -50%)",
         }}
       >
-        <motion.div drag>
+        <motion.div
+          drag
+          dragMomentum={false}
+          dragListener={false}
+          dragControls={dragControls}
+        >
           <Window className="window w-full h-full min-h-[300px]">
-            <WindowHeader className="window-title flex justify-between items-center">
+            <WindowHeader
+              className="window-title flex justify-between items-center"
+              onPointerDown={startDrag}
+            >
               <span>{title}</span>
               <Dialog.Close asChild>
                 <Button>

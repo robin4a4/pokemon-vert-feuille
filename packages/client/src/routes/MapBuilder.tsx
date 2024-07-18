@@ -156,75 +156,56 @@ export function MapBuilder() {
               "bg-teal-600 !text-white": currentTool === "eraser",
             })}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="1em"
-              height="1em"
-              viewBox="0 0 24 24"
-            >
-              <path
-                fill="currentColor"
-                d="M21 5H7v2H5v2H3v2H1v2h2v2h2v2h2v2h16V5zM7 17v-2H5v-2H3v-2h2V9h2V7h14v10zm8-6h-2V9h-2v2h2v2h-2v2h2v-2h2v2h2v-2h-2zm0 0V9h2v2z"
-              ></path>
-            </svg>
+            Eraser
           </MenuListItem>
           <Handle size={38} />
           <DialogRoot>
             <DialogTrigger asChild>
-              <MenuListItem as="button">Open Dialog</MenuListItem>
+              <MenuListItem as="button">Settings</MenuListItem>
             </DialogTrigger>
-            <DialogContent title="Settings">pouet</DialogContent>
+            <DialogContent title="Settings">
+              <GroupBox label="Rows">
+                <Slider
+                  size="200px"
+                  defaultValue={40}
+                  min={20}
+                  max={80}
+                  step={10}
+                  onChange={(value) => setSize({ ...size, rows: value })}
+                  marks={[
+                    { value: 20, label: "20" },
+                    { value: 30, label: "30" },
+                    { value: 40, label: "40" },
+                    { value: 50, label: "50" },
+                    { value: 60, label: "60" },
+                    { value: 70, label: "70" },
+                    { value: 80, label: "80" },
+                  ]}
+                />
+              </GroupBox>
+              <br />
+              <GroupBox label="Columns">
+                <Slider
+                  size="200px"
+                  defaultValue={40}
+                  min={20}
+                  max={80}
+                  step={10}
+                  onChange={(value) => setSize({ ...size, cols: value })}
+                  marks={[
+                    { value: 20, label: "20" },
+                    { value: 30, label: "30" },
+                    { value: 40, label: "40" },
+                    { value: 50, label: "50" },
+                    { value: 60, label: "60" },
+                    { value: 70, label: "70" },
+                    { value: 80, label: "80" },
+                  ]}
+                />
+              </GroupBox>
+            </DialogContent>
           </DialogRoot>
         </MenuList>
-        <Frame
-          style={{
-            position: "absolute",
-            width: 300,
-            bottom: 0,
-            marginLeft: 16,
-            padding: "0.5rem",
-          }}
-        >
-          <GroupBox label="Rows">
-            <Slider
-              size="200px"
-              defaultValue={40}
-              min={20}
-              max={80}
-              step={10}
-              onChange={(value) => setSize({ ...size, rows: value })}
-              marks={[
-                { value: 20, label: "20" },
-                { value: 30, label: "30" },
-                { value: 40, label: "40" },
-                { value: 50, label: "50" },
-                { value: 60, label: "60" },
-                { value: 70, label: "70" },
-                { value: 80, label: "80" },
-              ]}
-            />
-          </GroupBox>
-          <br />
-          <GroupBox label="Columns">
-            <Slider
-              size="200px"
-              defaultValue={40}
-              min={20}
-              max={80}
-              step={10}
-              onChange={(value) => setSize({ ...size, cols: value })}
-              marks={[
-                { value: 20, label: "20" },
-                { value: 30, label: "30" },
-                { value: 40, label: "40" },
-                { value: 50, label: "50" },
-                { value: 60, label: "60" },
-                { value: 70, label: "70" },
-                { value: 80, label: "80" },
-              ]}
-            />
-          </GroupBox>
-        </Frame>
       </div>
     </div>
   );
