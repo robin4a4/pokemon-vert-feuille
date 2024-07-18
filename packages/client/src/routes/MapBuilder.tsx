@@ -20,17 +20,17 @@ const SPRITES = Object.values(
 );
 
 export function MapBuilder() {
-  const [size, setSize] = useState({ rows: 40, cols: 40 });
   const [currentTool, setCurrentTool] = useState<"brush" | "eraser">("brush");
   const [selectedSprite, setSelectedSprite] = useState<string | null>(null);
 
-  const [grid, setGrid] = useState(
-    Array.from({ length: size.rows }, () =>
-      Array(size.cols).fill({
+  const [grid, setGrid] = useState<Array<Array<{ sprite: string | null }>>>(
+    Array.from({ length: 40 }, () =>
+      Array.from({ length: 40 }, () => ({
         sprite: null,
-      })
+      }))
     )
   );
+  console.log("GRID", grid);
 
   const paintOnCell = (el: HTMLButtonElement) => {
     const row = parseInt(el.dataset.row as string);
@@ -94,7 +94,7 @@ export function MapBuilder() {
         <div
           className="grid border-t border-l border-black/10"
           style={{
-            gridTemplateColumns: `repeat(${size.rows}, ${CELL_SIZE}px)`,
+            gridTemplateColumns: `repeat(${grid.length}, ${CELL_SIZE}px)`,
           }}
           onPointerMove={handleDrag}
         >
@@ -123,7 +123,7 @@ export function MapBuilder() {
         </div>
       </Frame>
       <div className="relative">
-        <MenuList inline style={{ width: 700 }}>
+        <MenuList inline style={{ width: 800 }}>
           {[...SPRITES].splice(0, 15).map((sprite, i) => (
             <MenuListItem
               key={i}
@@ -148,6 +148,39 @@ export function MapBuilder() {
             </MenuListItem>
           ))}
           <Handle size={38} />
+          <DialogRoot>
+            <DialogTrigger asChild>
+              <MenuListItem as="button">All sprites</MenuListItem>
+            </DialogTrigger>
+            <DialogContent title="Settings">
+              <div className="grid grid-cols-8 gap-1">
+                {[...SPRITES].map((sprite, i) => (
+                  <MenuListItem
+                    key={i}
+                    as="button"
+                    data-name={sprite}
+                    onClick={(ev: SyntheticEvent) => {
+                      const target = ev.currentTarget as HTMLButtonElement;
+                      console.log("SELECTED", target.dataset.name);
+                      setCurrentTool("brush");
+                      setSelectedSprite(target.dataset.name as string);
+                    }}
+                    className={cn({
+                      "bg-teal-600":
+                        selectedSprite === sprite && currentTool === "brush",
+                    })}
+                  >
+                    <img
+                      src={sprite}
+                      alt={`sprite-${i}`}
+                      style={{ minWidth: CELL_SIZE, height: CELL_SIZE }}
+                    />
+                  </MenuListItem>
+                ))}
+              </div>
+            </DialogContent>
+          </DialogRoot>
+          <Handle size={38} />
           <MenuListItem
             as="button"
             onClick={() => setCurrentTool("eraser")}
@@ -170,7 +203,16 @@ export function MapBuilder() {
                   min={20}
                   max={80}
                   step={10}
-                  onChange={(value) => setSize({ ...size, rows: value })}
+                  onChange={(value) => {
+                    setGrid((prevGrid) => {
+                      const newGrid = Array.from({ length: value }, () =>
+                        Array.from({ length: prevGrid[0].length }, () => ({
+                          sprite: null,
+                        }))
+                      );
+                      return newGrid;
+                    });
+                  }}
                   marks={[
                     { value: 20, label: "20" },
                     { value: 30, label: "30" },
@@ -190,7 +232,18 @@ export function MapBuilder() {
                   min={20}
                   max={80}
                   step={10}
-                  onChange={(value) => setSize({ ...size, cols: value })}
+                  onChange={(value) => {
+                    setGrid((prevGrid) => {
+                      const newGrid = Array.from(
+                        { length: prevGrid.length },
+                        () =>
+                          Array.from({ length: value }, () => ({
+                            sprite: null,
+                          }))
+                      );
+                      return newGrid;
+                    });
+                  }}
                   marks={[
                     { value: 20, label: "20" },
                     { value: 30, label: "30" },
