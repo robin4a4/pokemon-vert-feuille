@@ -1,5 +1,13 @@
-import { SyntheticEvent, useState } from "react";
-import { Frame, GroupBox, MenuList, MenuListItem, Slider } from "react95";
+import { SyntheticEvent, useCallback, useState } from "react";
+import {
+  Frame,
+  GroupBox,
+  MenuList,
+  MenuListItem,
+  Slider,
+  Separator,
+  Handle,
+} from "react95";
 import cn from "classnames";
 
 const CELL_SIZE = 18;
@@ -12,6 +20,7 @@ const SPRITES = Object.values(
 
 export function MapBuilder() {
   const [size, setSize] = useState({ rows: 40, cols: 40 });
+  const [currentTool, setCurrentTool] = useState<"brush" | "eraser">("brush");
   const [selectedSprite, setSelectedSprite] = useState<string | null>(null);
 
   const [grid, setGrid] = useState(
@@ -22,45 +31,48 @@ export function MapBuilder() {
     )
   );
 
-  const toggleSpriteOnCell = (ev: SyntheticEvent) => {
-    const target = ev.currentTarget as HTMLButtonElement;
-
-    if (!selectedSprite) return;
-
-    const currentSprite = target.dataset.sprite;
-    const row = parseInt(target.dataset.row as string);
-    const col = parseInt(target.dataset.col as string);
+  const paintOnCell = (el: HTMLButtonElement) => {
+    const row = parseInt(el.dataset.row as string);
+    const col = parseInt(el.dataset.col as string);
 
     if (!row || !col) return;
 
-    setGrid((prevGrid) => {
-      const newGrid = [...prevGrid];
-      newGrid[row][col] = {
-        sprite: currentSprite ? null : selectedSprite,
-      };
-      return newGrid;
-    });
+    if (currentTool === "eraser") {
+      setGrid((prevGrid) => {
+        const newGrid = [...prevGrid];
+        newGrid[row][col] = {
+          sprite: null,
+        };
+        return newGrid;
+      });
+    } else {
+      setGrid((prevGrid) => {
+        const newGrid = [...prevGrid];
+        newGrid[row][col] = {
+          sprite: selectedSprite,
+        };
+        return newGrid;
+      });
+    }
+  };
+
+  const toggleSpriteOnCell = (ev: SyntheticEvent) => {
+    const target = (ev.target as HTMLElement).closest(
+      "button"
+    ) as HTMLButtonElement;
+
+    paintOnCell(target);
   };
 
   const handleDrag = (ev: SyntheticEvent & { buttons: number }) => {
     const isDragging = ev.buttons > 0;
     if (!isDragging) return;
-    const target = ev.target as HTMLButtonElement;
-    if (!selectedSprite) return;
 
-    const currentSprite = target.dataset.sprite;
-    const row = parseInt(target.dataset.row as string);
-    const col = parseInt(target.dataset.col as string);
+    const target = (ev.target as HTMLElement).closest(
+      "button"
+    ) as HTMLButtonElement;
 
-    if (!row || !col) return;
-
-    setGrid((prevGrid) => {
-      const newGrid = [...prevGrid];
-      newGrid[row][col] = {
-        sprite: currentSprite ? null : selectedSprite,
-      };
-      return newGrid;
-    });
+    paintOnCell(target);
   };
 
   return (
@@ -111,7 +123,7 @@ export function MapBuilder() {
       </Frame>
       <div className="relative">
         <MenuList inline style={{ width: 700 }}>
-          {[...SPRITES].splice(0, 20).map((sprite, i) => (
+          {[...SPRITES].splice(0, 15).map((sprite, i) => (
             <MenuListItem
               key={i}
               as="button"
@@ -119,10 +131,12 @@ export function MapBuilder() {
               onClick={(ev: SyntheticEvent) => {
                 const target = ev.currentTarget as HTMLButtonElement;
                 console.log("SELECTED", target.dataset.name);
+                setCurrentTool("brush");
                 setSelectedSprite(target.dataset.name as string);
               }}
               className={cn({
-                "bg-teal-600": selectedSprite === sprite,
+                "bg-teal-600":
+                  selectedSprite === sprite && currentTool === "brush",
               })}
             >
               <img
@@ -132,6 +146,26 @@ export function MapBuilder() {
               />
             </MenuListItem>
           ))}
+          <Handle size={38} />
+          <MenuListItem
+            as="button"
+            onClick={() => setCurrentTool("eraser")}
+            className={cn({
+              "bg-teal-600 !text-white": currentTool === "eraser",
+            })}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="1em"
+              height="1em"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="currentColor"
+                d="M21 5H7v2H5v2H3v2H1v2h2v2h2v2h2v2h16V5zM7 17v-2H5v-2H3v-2h2V9h2V7h14v10zm8-6h-2V9h-2v2h2v2h-2v2h2v-2h2v2h2v-2h-2zm0 0V9h2v2z"
+              ></path>
+            </svg>
+          </MenuListItem>
         </MenuList>
         <Frame
           style={{
