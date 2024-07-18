@@ -23,13 +23,20 @@ export function MapBuilder() {
   );
 
   const toggleSpriteOnCell = (ev: SyntheticEvent) => {
-    const target = ev.target as HTMLButtonElement;
+    const target = ev.currentTarget as HTMLButtonElement;
+
+    if (!selectedSprite) return;
+
+    const currentSprite = target.dataset.sprite;
     const row = parseInt(target.dataset.row as string);
     const col = parseInt(target.dataset.col as string);
+
+    if (!row || !col) return;
+
     setGrid((prevGrid) => {
       const newGrid = [...prevGrid];
       newGrid[row][col] = {
-        sprite: selectedSprite,
+        sprite: currentSprite ? null : selectedSprite,
       };
       return newGrid;
     });
@@ -63,6 +70,7 @@ export function MapBuilder() {
                 onClick={toggleSpriteOnCell}
                 data-row={i}
                 data-col={j}
+                data-sprite={row.sprite}
                 key={`${i}-${j}`}
                 style={{
                   borderRight: "1px solid rgba(0, 0, 0, 0.1)",
@@ -92,7 +100,7 @@ export function MapBuilder() {
                 setSelectedSprite(target.dataset.name as string);
               }}
               className={cn({
-                "bg-blue-500": selectedSprite === sprite,
+                "bg-teal-600": selectedSprite === sprite,
               })}
             >
               <img
