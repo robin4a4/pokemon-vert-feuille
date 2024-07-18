@@ -13,7 +13,7 @@ export function DialogContent({
   const dragControls = useDragControls();
 
   function startDrag(event: React.PointerEvent) {
-    dragControls.start(event, { snapToCursor: true });
+    dragControls.start(event);
   }
   return (
     <Dialog.Portal>
