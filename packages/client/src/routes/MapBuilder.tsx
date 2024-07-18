@@ -9,6 +9,8 @@ import {
   Handle,
 } from "react95";
 import cn from "classnames";
+import { DialogContent, DialogRoot } from "../components/Dialog";
+import { DialogTrigger } from "@radix-ui/react-dialog";
 
 const CELL_SIZE = 18;
 const SPRITES = Object.values(
@@ -166,6 +168,13 @@ export function MapBuilder() {
               ></path>
             </svg>
           </MenuListItem>
+          <Handle size={38} />
+          <DialogRoot>
+            <DialogTrigger asChild>
+              <MenuListItem as="button">Open Dialog</MenuListItem>
+            </DialogTrigger>
+            <DialogContent title="Settings">pouet</DialogContent>
+          </DialogRoot>
         </MenuList>
         <Frame
           style={{
