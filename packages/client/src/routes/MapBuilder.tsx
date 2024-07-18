@@ -1,33 +1,39 @@
-import { useEffect, useState } from "react";
+import { SyntheticEvent, useState } from "react";
 import { Frame, GroupBox, MenuList, MenuListItem, Slider } from "react95";
+import cn from "classnames";
 
 const CELL_SIZE = 18;
+const SPRITES = Object.values(
+  import.meta.glob("../assets/sprites/*.{png,jpg,jpeg,svg}", {
+    eager: true,
+    as: "url",
+  })
+);
 
 export function MapBuilder() {
   const [size, setSize] = useState({ rows: 40, cols: 40 });
+  const [selectedSprite, setSelectedSprite] = useState<string | null>(null);
 
-  const grid = Array.from({ length: size.rows }, () =>
-    Array(size.cols).fill(0)
+  const [grid, setGrid] = useState(
+    Array.from({ length: size.rows }, () =>
+      Array(size.cols).fill({
+        sprite: null,
+      })
+    )
   );
 
-  const [sprites, setSprites] = useState([]);
-
-  useEffect(() => {
-    const importAllSprites = async () => {
-      const spriteModules = import.meta.glob(
-        "../assets/sprites/*.{png,jpg,jpeg,svg}"
-      );
-      const spritePromises = Object.values(spriteModules).map((importSprite) =>
-        importSprite()
-      );
-      const importedSprites = await Promise.all(spritePromises);
-      setSprites(importedSprites.map((mod) => mod.default));
-    };
-
-    importAllSprites();
-  }, []);
-
-  console.log(sprites);
+  const toggleSpriteOnCell = (ev: SyntheticEvent) => {
+    const target = ev.target as HTMLButtonElement;
+    const row = parseInt(target.dataset.row as string);
+    const col = parseInt(target.dataset.col as string);
+    setGrid((prevGrid) => {
+      const newGrid = [...prevGrid];
+      newGrid[row][col] = {
+        sprite: selectedSprite,
+      };
+      return newGrid;
+    });
+  };
 
   return (
     <div
@@ -52,7 +58,11 @@ export function MapBuilder() {
         >
           {grid.map((col, i) =>
             col.map((row, j) => (
-              <div
+              <button
+                type="button"
+                onClick={toggleSpriteOnCell}
+                data-row={i}
+                data-col={j}
                 key={`${i}-${j}`}
                 style={{
                   borderRight: "1px solid rgba(0, 0, 0, 0.1)",
@@ -60,15 +70,31 @@ export function MapBuilder() {
                   width: CELL_SIZE,
                   height: CELL_SIZE,
                 }}
-              />
+              >
+                {row.sprite ? (
+                  <img src={row.sprite} width={CELL_SIZE} height={CELL_SIZE} />
+                ) : null}
+              </button>
             ))
           )}
         </div>
       </Frame>
       <div className="relative">
         <MenuList inline style={{ width: 700 }}>
-          {sprites.splice(0, 20).map((sprite, i) => (
-            <MenuListItem key={i}>
+          {[...SPRITES].splice(0, 20).map((sprite, i) => (
+            <MenuListItem
+              key={i}
+              as="button"
+              data-name={sprite}
+              onClick={(ev: SyntheticEvent) => {
+                const target = ev.currentTarget as HTMLButtonElement;
+                console.log("SELECTED", target.dataset.name);
+                setSelectedSprite(target.dataset.name as string);
+              }}
+              className={cn({
+                "bg-blue-500": selectedSprite === sprite,
+              })}
+            >
               <img
                 src={sprite}
                 alt={`sprite-${i}`}
