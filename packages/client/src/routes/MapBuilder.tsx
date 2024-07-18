@@ -1,11 +1,10 @@
-import { SyntheticEvent, useCallback, useState } from "react";
+import { SyntheticEvent, useState } from "react";
 import {
   Frame,
   GroupBox,
   MenuList,
   MenuListItem,
   Slider,
-  Separator,
   Handle,
 } from "react95";
 import cn from "classnames";
