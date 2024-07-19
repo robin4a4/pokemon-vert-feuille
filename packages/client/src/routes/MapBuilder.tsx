@@ -19,8 +19,31 @@ const SPRITES = Object.values(
   })
 );
 
+type Grid = Array<Array<{ sprite: string | null }>>;
+
+function paint(
+  prevGrid: Grid,
+  row: number,
+  col: number,
+  brushSize: number,
+  selectedSprite: string | null
+) {
+  const newGrid = [...prevGrid];
+  for (let i = row; i <= row + brushSize - 1; i++) {
+    for (let j = col; j <= col + brushSize - 1; j++) {
+      if (i >= 0 && i < newGrid.length && j >= 0 && j < newGrid[0].length) {
+        newGrid[i][j] = {
+          sprite: selectedSprite,
+        };
+      }
+    }
+  }
+  return newGrid;
+}
+
 export function MapBuilder() {
   const [currentTool, setCurrentTool] = useState<"brush" | "eraser">("brush");
+  const [brushSize, setBrushSize] = useState(1);
   const [selectedSprite, setSelectedSprite] = useState<string | null>(null);
 
   const [grid, setGrid] = useState<Array<Array<{ sprite: string | null }>>>(
@@ -36,23 +59,13 @@ export function MapBuilder() {
     const col = parseInt(el.dataset.col as string);
 
     if (row === undefined || col === undefined) return;
-
+    console.log("CLICK", row, col, brushSize);
     if (currentTool === "eraser") {
-      setGrid((prevGrid) => {
-        const newGrid = [...prevGrid];
-        newGrid[row][col] = {
-          sprite: null,
-        };
-        return newGrid;
-      });
+      setGrid((prevGrid) => paint(prevGrid, row, col, brushSize, null));
     } else {
-      setGrid((prevGrid) => {
-        const newGrid = [...prevGrid];
-        newGrid[row][col] = {
-          sprite: selectedSprite,
-        };
-        return newGrid;
-      });
+      setGrid((prevGrid) =>
+        paint(prevGrid, row, col, brushSize, selectedSprite)
+      );
     }
   };
 
@@ -256,6 +269,25 @@ export function MapBuilder() {
                     { value: 60, label: "60" },
                     { value: 70, label: "70" },
                     { value: 80, label: "80" },
+                  ]}
+                />
+              </GroupBox>
+              <GroupBox label="Brush size">
+                <Slider
+                  size="200px"
+                  defaultValue={1}
+                  min={1}
+                  max={7}
+                  step={1}
+                  onChange={(value) => setBrushSize(value)}
+                  marks={[
+                    { value: 1, label: "1" },
+                    { value: 2, label: "2" },
+                    { value: 3, label: "3" },
+                    { value: 4, label: "4" },
+                    { value: 5, label: "5" },
+                    { value: 6, label: "6" },
+                    { value: 7, label: "7" },
                   ]}
                 />
               </GroupBox>
