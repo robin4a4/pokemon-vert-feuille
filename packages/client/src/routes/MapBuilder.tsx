@@ -34,7 +34,7 @@ export function MapBuilder() {
   const paintOnCell = (el: HTMLButtonElement) => {
     const row = parseInt(el.dataset.row as string);
     const col = parseInt(el.dataset.col as string);
-    console.log("PAINT", row, col);
+
     if (row === undefined || col === undefined) return;
 
     if (currentTool === "eraser") {
@@ -114,7 +114,12 @@ export function MapBuilder() {
                 }}
               >
                 {row.sprite ? (
-                  <img src={row.sprite} width={CELL_SIZE} height={CELL_SIZE} />
+                  <img
+                    src={row.sprite}
+                    width={CELL_SIZE}
+                    height={CELL_SIZE}
+                    className="pointer-events-none"
+                  />
                 ) : null}
               </button>
             ))
