@@ -59,7 +59,7 @@ export function MapBuilder() {
     const col = parseInt(el.dataset.col as string);
 
     if (row === undefined || col === undefined) return;
-    console.log("CLICK", row, col, brushSize);
+
     if (currentTool === "eraser") {
       setGrid((prevGrid) => paint(prevGrid, row, col, brushSize, null));
     } else {
@@ -216,7 +216,7 @@ export function MapBuilder() {
               <GroupBox label="Rows">
                 <Slider
                   size="200px"
-                  defaultValue={40}
+                  defaultValue={grid.length}
                   min={20}
                   max={80}
                   step={10}
@@ -245,7 +245,7 @@ export function MapBuilder() {
               <GroupBox label="Columns">
                 <Slider
                   size="200px"
-                  defaultValue={40}
+                  defaultValue={grid[0].length}
                   min={20}
                   max={80}
                   step={10}
@@ -275,7 +275,7 @@ export function MapBuilder() {
               <GroupBox label="Brush size">
                 <Slider
                   size="200px"
-                  defaultValue={1}
+                  defaultValue={brushSize}
                   min={1}
                   max={7}
                   step={1}
