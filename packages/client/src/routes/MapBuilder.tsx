@@ -30,13 +30,12 @@ export function MapBuilder() {
       }))
     )
   );
-  console.log("GRID", grid);
 
   const paintOnCell = (el: HTMLButtonElement) => {
     const row = parseInt(el.dataset.row as string);
     const col = parseInt(el.dataset.col as string);
-
-    if (!row || !col) return;
+    console.log("PAINT", row, col);
+    if (row === undefined || col === undefined) return;
 
     if (currentTool === "eraser") {
       setGrid((prevGrid) => {
@@ -92,7 +91,7 @@ export function MapBuilder() {
         }}
       >
         <div
-          className="grid border-t border-l border-black/10"
+          className="grid !border-t !border-l !border-black/10"
           style={{
             gridTemplateColumns: `repeat(${grid.length}, ${CELL_SIZE}px)`,
           }}
