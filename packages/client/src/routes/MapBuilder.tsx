@@ -128,6 +128,27 @@ function paint(
             };
           }
 
+          if (
+            (newGrid[i - 2][j]?.sprite === "sand-center-left.png" ||
+              newGrid[i - 2][j]?.sprite === "sand-top-left.png") &&
+            (newGrid[i - 1][j - 1]?.sprite === "sand-center-left.png" ||
+              newGrid[i - 1][j - 1]?.sprite === "sand-top-left.png")
+          ) {
+            newGrid[i - 1][j] = {
+              sprite: "sand-corner-top-left.png",
+            };
+          }
+          if (
+            (newGrid[i - 2][j + 1]?.sprite === "sand-center-left.png" ||
+              newGrid[i - 2][j + 1]?.sprite === "sand-top-left.png") &&
+            (newGrid[i - 1][j - 1]?.sprite === "sand-center-left.png" ||
+              newGrid[i - 1][j - 1]?.sprite === "sand-top-left.png")
+          ) {
+            newGrid[i - 1][j + 1] = {
+              sprite: "sand-corner-top-left.png",
+            };
+          }
+
           // CORNER TOP RIGHT
           if (
             (newGrid[i][j + 2]?.sprite === "sand-center-top.png" ||
@@ -231,6 +252,27 @@ function paint(
               newGrid[i + 1][j + 1]?.sprite === "sand-bottom-right.png")
           ) {
             newGrid[i + 1][j - 1] = {
+              sprite: "sand-corner-bottom-right.png",
+            };
+          }
+
+          if (
+            (newGrid[i][j + 2]?.sprite === "sand-center-bottom.png" ||
+              newGrid[i][j + 2]?.sprite === "sand-bottom-right.png") &&
+            (newGrid[i + 1][j + 1]?.sprite === "sand-center-bottom.png" ||
+              newGrid[i + 1][j + 1]?.sprite === "sand-bottom-right.png")
+          ) {
+            newGrid[i][j + 1] = {
+              sprite: "sand-corner-bottom-right.png",
+            };
+          }
+          if (
+            (newGrid[i - 1][j + 2]?.sprite === "sand-center-bottom.png" ||
+              newGrid[i - 1][j + 2]?.sprite === "sand-bottom-right.png") &&
+            (newGrid[i + 1][j + 1]?.sprite === "sand-center-bottom.png" ||
+              newGrid[i + 1][j + 1]?.sprite === "sand-bottom-right.png")
+          ) {
+            newGrid[i - 1][j + 1] = {
               sprite: "sand-corner-bottom-right.png",
             };
           }
