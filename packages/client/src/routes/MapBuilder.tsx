@@ -21,6 +21,20 @@ const SPRITES = Object.values(
 
 type Grid = Array<Array<{ sprite: string | null }>>;
 
+function erase(prevGrid: Grid, row: number, col: number, brushSize: number) {
+  const newGrid = [...prevGrid];
+  for (let i = row; i <= row + brushSize - 1; i++) {
+    for (let j = col; j <= col + brushSize - 1; j++) {
+      if (i >= 0 && i < newGrid.length && j >= 0 && j < newGrid[0].length) {
+        newGrid[i][j] = {
+          sprite: null,
+        };
+      }
+    }
+  }
+  return newGrid;
+}
+
 function paint(
   prevGrid: Grid,
   row: number,
@@ -32,9 +46,199 @@ function paint(
   for (let i = row; i <= row + brushSize - 1; i++) {
     for (let j = col; j <= col + brushSize - 1; j++) {
       if (i >= 0 && i < newGrid.length && j >= 0 && j < newGrid[0].length) {
-        newGrid[i][j] = {
-          sprite: selectedSprite,
-        };
+        if (selectedSprite === "sand-center.png") {
+          newGrid[i][j] = {
+            sprite: selectedSprite,
+          };
+          if (newGrid[i + 1][j]?.sprite !== "sand-center.png") {
+            newGrid[i + 1][j] = {
+              sprite: "sand-center-bottom.png",
+            };
+          }
+          if (newGrid[i - 1][j]?.sprite !== "sand-center.png") {
+            newGrid[i - 1][j] = {
+              sprite: "sand-center-top.png",
+            };
+          }
+          if (newGrid[i][j + 1]?.sprite !== "sand-center.png") {
+            newGrid[i][j + 1] = {
+              sprite: "sand-center-right.png",
+            };
+          }
+          if (newGrid[i][j - 1]?.sprite !== "sand-center.png") {
+            newGrid[i][j - 1] = {
+              sprite: "sand-center-left.png",
+            };
+          }
+          if (
+            newGrid[i + 1][j + 1]?.sprite !== "sand-center.png" &&
+            newGrid[i + 1][j + 1]?.sprite !== "sand-center-right.png" &&
+            newGrid[i + 1][j + 1]?.sprite !== "sand-center-bottom.png"
+          ) {
+            newGrid[i + 1][j + 1] = {
+              sprite: "sand-bottom-right.png",
+            };
+          }
+          if (
+            newGrid[i + 1][j - 1]?.sprite !== "sand-center.png" &&
+            newGrid[i + 1][j - 1]?.sprite !== "sand-center-left.png" &&
+            newGrid[i + 1][j - 1]?.sprite !== "sand-center-bottom.png"
+          ) {
+            newGrid[i + 1][j - 1] = {
+              sprite: "sand-bottom-left.png",
+            };
+          }
+          if (
+            newGrid[i - 1][j + 1]?.sprite !== "sand-center.png" &&
+            newGrid[i - 1][j + 1]?.sprite !== "sand-center-right.png" &&
+            newGrid[i - 1][j + 1]?.sprite !== "sand-center-top.png"
+          ) {
+            newGrid[i - 1][j + 1] = {
+              sprite: "sand-top-right.png",
+            };
+          }
+          if (
+            newGrid[i - 1][j - 1]?.sprite !== "sand-center.png" &&
+            newGrid[i - 1][j - 1]?.sprite !== "sand-center-left.png" &&
+            newGrid[i - 1][j - 1]?.sprite !== "sand-center-top.png"
+          ) {
+            newGrid[i - 1][j - 1] = {
+              sprite: "sand-top-left.png",
+            };
+          }
+          // CORNER TOP LEFT
+          if (
+            (newGrid[i][j - 2]?.sprite === "sand-center-top.png" ||
+              newGrid[i][j - 2]?.sprite === "sand-top-left.png") &&
+            (newGrid[i - 1][j - 1]?.sprite === "sand-center-left.png" ||
+              newGrid[i - 1][j - 1]?.sprite === "sand-top-left.png")
+          ) {
+            newGrid[i][j - 1] = {
+              sprite: "sand-corner-top-left.png",
+            };
+          }
+          if (
+            (newGrid[i + 1][j - 2]?.sprite === "sand-center-top.png" ||
+              newGrid[i + 1][j - 2]?.sprite === "sand-top-left.png") &&
+            (newGrid[i - 1][j - 1]?.sprite === "sand-center-left.png" ||
+              newGrid[i - 1][j - 1]?.sprite === "sand-top-left.png")
+          ) {
+            newGrid[i + 1][j - 1] = {
+              sprite: "sand-corner-top-left.png",
+            };
+          }
+
+          // CORNER TOP RIGHT
+          if (
+            (newGrid[i][j + 2]?.sprite === "sand-center-top.png" ||
+              newGrid[i][j + 2]?.sprite === "sand-top-right.png") &&
+            (newGrid[i - 1][j + 1]?.sprite === "sand-center-right.png" ||
+              newGrid[i - 1][j + 1]?.sprite === "sand-top-right.png")
+          ) {
+            newGrid[i][j + 1] = {
+              sprite: "sand-corner-top-right.png",
+            };
+          }
+          if (
+            (newGrid[i + 1][j + 2]?.sprite === "sand-center-top.png" ||
+              newGrid[i + 1][j + 2]?.sprite === "sand-top-right.png") &&
+            (newGrid[i - 1][j + 1]?.sprite === "sand-center-right.png" ||
+              newGrid[i - 1][j + 1]?.sprite === "sand-top-right.png")
+          ) {
+            newGrid[i + 1][j + 1] = {
+              sprite: "sand-corner-top-right.png",
+            };
+          }
+          if (
+            (newGrid[i - 2][j]?.sprite === "sand-center-right.png" ||
+              newGrid[i - 2][j]?.sprite === "sand-top-right.png") &&
+            (newGrid[i - 1][j + 1]?.sprite === "sand-center-top.png" ||
+              newGrid[i - 1][j + 1]?.sprite === "sand-top-right.png")
+          ) {
+            newGrid[i - 1][j] = {
+              sprite: "sand-corner-top-right.png",
+            };
+          }
+          if (
+            (newGrid[i - 2][j - 1]?.sprite === "sand-center-right.png" ||
+              newGrid[i - 2][j - 1]?.sprite === "sand-top-right.png") &&
+            (newGrid[i - 1][j + 1]?.sprite === "sand-center-top.png" ||
+              newGrid[i - 1][j + 1]?.sprite === "sand-top-right.png")
+          ) {
+            newGrid[i - 1][j - 1] = {
+              sprite: "sand-corner-top-right.png",
+            };
+          }
+
+          // CORNER BOTTOM LEFT
+          if (
+            (newGrid[i + 2][j]?.sprite === "sand-center-left.png" ||
+              newGrid[i + 2][j]?.sprite === "sand-bottom-left.png") &&
+            (newGrid[i + 1][j - 1]?.sprite === "sand-center-bottom.png" ||
+              newGrid[i + 1][j - 1]?.sprite === "sand-bottom-left.png")
+          ) {
+            newGrid[i + 1][j] = {
+              sprite: "sand-corner-bottom-left.png",
+            };
+          }
+          if (
+            (newGrid[i + 2][j + 1]?.sprite === "sand-center-left.png" ||
+              newGrid[i + 2][j + 1]?.sprite === "sand-bottom-left.png") &&
+            (newGrid[i + 1][j - 1]?.sprite === "sand-center-bottom.png" ||
+              newGrid[i + 1][j - 1]?.sprite === "sand-bottom-left.png")
+          ) {
+            newGrid[i + 1][j + 1] = {
+              sprite: "sand-corner-bottom-left.png",
+            };
+          }
+
+          if (
+            (newGrid[i + 1][j - 1]?.sprite === "sand-center-left.png" ||
+              newGrid[i + 1][j - 1]?.sprite === "sand-bottom-left.png") &&
+            (newGrid[i][j - 2]?.sprite === "sand-center-bottom.png" ||
+              newGrid[i][j - 2]?.sprite === "sand-bottom-left.png")
+          ) {
+            newGrid[i][j - 1] = {
+              sprite: "sand-corner-bottom-left.png",
+            };
+          }
+          if (
+            (newGrid[i + 1][j - 1]?.sprite === "sand-center-left.png" ||
+              newGrid[i + 1][j - 1]?.sprite === "sand-bottom-left.png") &&
+            (newGrid[i - 1][j - 2]?.sprite === "sand-center-bottom.png" ||
+              newGrid[i - 1][j - 2]?.sprite === "sand-bottom-left.png")
+          ) {
+            newGrid[i - 1][j - 1] = {
+              sprite: "sand-corner-bottom-left.png",
+            };
+          }
+
+          // CORNER BOTTOM RIGHT
+          if (
+            (newGrid[i + 2][j]?.sprite === "sand-center-right.png" ||
+              newGrid[i + 2][j]?.sprite === "sand-bottom-right.png") &&
+            (newGrid[i + 1][j + 1]?.sprite === "sand-center-bottom.png" ||
+              newGrid[i + 1][j + 1]?.sprite === "sand-bottom-right.png")
+          ) {
+            newGrid[i + 1][j] = {
+              sprite: "sand-corner-bottom-right.png",
+            };
+          }
+          if (
+            (newGrid[i + 2][j - 1]?.sprite === "sand-center-right.png" ||
+              newGrid[i + 2][j - 1]?.sprite === "sand-bottom-right.png") &&
+            (newGrid[i + 1][j + 1]?.sprite === "sand-center-bottom.png" ||
+              newGrid[i + 1][j + 1]?.sprite === "sand-bottom-right.png")
+          ) {
+            newGrid[i + 1][j - 1] = {
+              sprite: "sand-corner-bottom-right.png",
+            };
+          }
+        } else {
+          newGrid[i][j] = {
+            sprite: selectedSprite,
+          };
+        }
       }
     }
   }
@@ -61,7 +265,7 @@ export function MapBuilder() {
     if (row === undefined || col === undefined) return;
 
     if (currentTool === "eraser") {
-      setGrid((prevGrid) => paint(prevGrid, row, col, brushSize, null));
+      setGrid((prevGrid) => erase(prevGrid, row, col, brushSize));
     } else {
       setGrid((prevGrid) =>
         paint(prevGrid, row, col, brushSize, selectedSprite)
@@ -128,7 +332,7 @@ export function MapBuilder() {
               >
                 {row.sprite ? (
                   <img
-                    src={row.sprite}
+                    src={`/src/assets/sprites/${row.sprite}`}
                     width={CELL_SIZE}
                     height={CELL_SIZE}
                     className="pointer-events-none"
@@ -145,10 +349,9 @@ export function MapBuilder() {
             <MenuListItem
               key={i}
               as="button"
-              data-name={sprite}
+              data-name={sprite.split("/").pop()}
               onClick={(ev: SyntheticEvent) => {
                 const target = ev.currentTarget as HTMLButtonElement;
-                console.log("SELECTED", target.dataset.name);
                 setCurrentTool("brush");
                 setSelectedSprite(target.dataset.name as string);
               }}
@@ -175,7 +378,7 @@ export function MapBuilder() {
                   <MenuListItem
                     key={i}
                     as="button"
-                    data-name={sprite}
+                    data-name={sprite.split("/").pop()}
                     onClick={(ev: SyntheticEvent) => {
                       const target = ev.currentTarget as HTMLButtonElement;
                       console.log("SELECTED", target.dataset.name);
