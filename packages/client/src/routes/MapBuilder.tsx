@@ -470,8 +470,7 @@ export function MapBuilder() {
               return new MediumTree().paint(prevGrid, row, col);
           }
         }
-        if (selectedSprite)
-          return paint(prevGrid, row, col, brushSize, selectedSprite);
+        return paint(prevGrid, row, col, brushSize, selectedSprite);
       });
     }
   };
