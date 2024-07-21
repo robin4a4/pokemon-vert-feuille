@@ -534,7 +534,7 @@ export function MapBuilder() {
               >
                 {row.sprite ? (
                   <img
-                    src={`/src/assets/sprites/${row.sprite}`}
+                    src={`/sprites/${row.sprite}`}
                     width={CELL_SIZE}
                     height={CELL_SIZE}
                     className="pointer-events-none"
@@ -562,7 +562,7 @@ export function MapBuilder() {
             })}
           >
             <img
-              src={"/src/assets/sprites/sand-center.png"}
+              src={"/sprites/sand-center.png"}
               alt="sand-center"
               style={{ minWidth: CELL_SIZE, height: CELL_SIZE }}
             />
@@ -583,7 +583,7 @@ export function MapBuilder() {
             })}
           >
             <img
-              src={"/src/assets/sprites/water-center.png"}
+              src={"/sprites/water-center.png"}
               alt={`water-center`}
               style={{ minWidth: CELL_SIZE, height: CELL_SIZE }}
             />
@@ -604,7 +604,7 @@ export function MapBuilder() {
             })}
           >
             <img
-              src={"/src/assets/sprites/grass-center.png"}
+              src={"/sprites/grass-center.png"}
               alt="grass-center"
               style={{ minWidth: CELL_SIZE, height: CELL_SIZE }}
             />
@@ -625,7 +625,7 @@ export function MapBuilder() {
             })}
           >
             <img
-              src={"/src/assets/sprites/small-tree-1.png"}
+              src={"/sprites/small-tree-1.png"}
               style={{ minWidth: CELL_SIZE, height: CELL_SIZE }}
             />
           </MenuListItem>
@@ -645,7 +645,7 @@ export function MapBuilder() {
             })}
           >
             <img
-              src={"/src/assets/sprites/medium-tree-left-1.png"}
+              src={"/sprites/medium-tree-0-1.png"}
               style={{ minWidth: CELL_SIZE, height: CELL_SIZE }}
             />
           </MenuListItem>
