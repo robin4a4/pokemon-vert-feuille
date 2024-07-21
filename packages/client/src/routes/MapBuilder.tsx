@@ -19,6 +19,330 @@ const SPRITES = Object.values(
   })
 );
 
+class Zone {
+  type: string | null = null;
+
+  paint(prevGrid: Grid, row: number, col: number, brushSize: number) {
+    if (!this.type) return prevGrid;
+    const newGrid = [...prevGrid];
+    for (let i = row; i <= row + brushSize - 1; i++) {
+      for (let j = col; j <= col + brushSize - 1; j++) {
+        if (i >= 0 && i < newGrid.length && j >= 0 && j < newGrid[0].length) {
+          newGrid[i][j] = {
+            sprite: `${this.type}-center.png`,
+          };
+          if (
+            newGrid[i + 1][j]?.sprite !== `${this.type}-center.png` &&
+            newGrid[i + 1][j]?.sprite !==
+              `${this.type}-corner-bottom-right.png` &&
+            newGrid[i + 1][j]?.sprite !== `${this.type}-corner-bottom-left.png`
+          ) {
+            newGrid[i + 1][j] = {
+              sprite: `${this.type}-center-bottom.png`,
+            };
+          }
+          if (
+            newGrid[i - 1][j]?.sprite !== `${this.type}-center.png` &&
+            newGrid[i + 1][j]?.sprite !== `${this.type}-corner-top-right.png` &&
+            newGrid[i + 1][j]?.sprite !== `${this.type}-corner-top-left.png`
+          ) {
+            newGrid[i - 1][j] = {
+              sprite: `${this.type}-center-top.png`,
+            };
+          }
+          if (
+            newGrid[i][j + 1]?.sprite !== `${this.type}-center.png` &&
+            newGrid[i + 1][j]?.sprite !== `${this.type}-corner-top-right.png` &&
+            newGrid[i + 1][j]?.sprite !== `${this.type}-corner-bottom-right.png`
+          ) {
+            newGrid[i][j + 1] = {
+              sprite: `${this.type}-center-right.png`,
+            };
+          }
+          if (
+            newGrid[i][j - 1]?.sprite !== `${this.type}-center.png` &&
+            newGrid[i + 1][j]?.sprite !== `${this.type}-corner-top-left.png` &&
+            newGrid[i + 1][j]?.sprite !== `${this.type}-corner-bottom-left.png`
+          ) {
+            newGrid[i][j - 1] = {
+              sprite: `${this.type}-center-left.png`,
+            };
+          }
+          if (
+            newGrid[i + 1][j + 1]?.sprite !== `${this.type}-center.png` &&
+            newGrid[i + 1][j + 1]?.sprite !==
+              `${this.type}-corner-bottom-right.png` &&
+            newGrid[i + 1][j + 1]?.sprite !== `${this.type}-center-right.png` &&
+            newGrid[i + 1][j + 1]?.sprite !== `${this.type}-center-bottom.png`
+          ) {
+            newGrid[i + 1][j + 1] = {
+              sprite: `${this.type}-bottom-right.png`,
+            };
+          }
+          if (
+            newGrid[i + 1][j - 1]?.sprite !== `${this.type}-center.png` &&
+            newGrid[i + 1][j - 1]?.sprite !==
+              `${this.type}-corner-bottom-left.png` &&
+            newGrid[i + 1][j - 1]?.sprite !== `${this.type}-center-left.png` &&
+            newGrid[i + 1][j - 1]?.sprite !== `${this.type}-center-bottom.png`
+          ) {
+            newGrid[i + 1][j - 1] = {
+              sprite: `${this.type}-bottom-left.png`,
+            };
+          }
+          if (
+            newGrid[i - 1][j + 1]?.sprite !== `${this.type}-center.png` &&
+            newGrid[i - 1][j + 1]?.sprite !==
+              `${this.type}-corner-top-right.png` &&
+            newGrid[i - 1][j + 1]?.sprite !==
+              `${this.type}-corner-top-left.png` &&
+            newGrid[i - 1][j + 1]?.sprite !== `${this.type}-center-right.png` &&
+            newGrid[i - 1][j + 1]?.sprite !== `${this.type}-center-top.png`
+          ) {
+            newGrid[i - 1][j + 1] = {
+              sprite: `${this.type}-top-right.png`,
+            };
+          }
+          if (
+            newGrid[i - 1][j - 1]?.sprite !== `${this.type}-center.png` &&
+            newGrid[i - 1][j - 1]?.sprite !==
+              `${this.type}-corner-top-right.png` &&
+            newGrid[i - 1][j - 1]?.sprite !==
+              `${this.type}-corner-top-left.png` &&
+            newGrid[i - 1][j - 1]?.sprite !== `${this.type}-center-left.png` &&
+            newGrid[i - 1][j - 1]?.sprite !== `${this.type}-center-top.png`
+          ) {
+            newGrid[i - 1][j - 1] = {
+              sprite: `${this.type}-top-left.png`,
+            };
+          }
+          // CORNER TOP LEFT
+          if (
+            (newGrid[i][j - 2]?.sprite === `${this.type}-center-top.png` ||
+              newGrid[i][j - 2]?.sprite === `${this.type}-top-left.png`) &&
+            (newGrid[i - 1][j - 1]?.sprite === `${this.type}-center-left.png` ||
+              newGrid[i - 1][j - 1]?.sprite === `${this.type}-top-left.png`)
+          ) {
+            newGrid[i][j - 1] = {
+              sprite: `${this.type}-corner-top-left.png`,
+            };
+          }
+          if (
+            (newGrid[i + 1][j - 2]?.sprite === `${this.type}-center-top.png` ||
+              newGrid[i + 1][j - 2]?.sprite === `${this.type}-top-left.png`) &&
+            (newGrid[i - 1][j - 1]?.sprite === `${this.type}-center-left.png` ||
+              newGrid[i - 1][j - 1]?.sprite === `${this.type}-top-left.png`)
+          ) {
+            newGrid[i + 1][j - 1] = {
+              sprite: `${this.type}-corner-top-left.png`,
+            };
+          }
+
+          if (
+            (newGrid[i - 2][j]?.sprite === `${this.type}-center-left.png` ||
+              newGrid[i - 2][j]?.sprite === `${this.type}-top-left.png`) &&
+            (newGrid[i - 1][j - 1]?.sprite === `${this.type}-center-left.png` ||
+              newGrid[i - 1][j - 1]?.sprite === `${this.type}-top-left.png`)
+          ) {
+            newGrid[i - 1][j] = {
+              sprite: `${this.type}-corner-top-left.png`,
+            };
+          }
+          if (
+            (newGrid[i - 2][j + 1]?.sprite === `${this.type}-center-left.png` ||
+              newGrid[i - 2][j + 1]?.sprite === `${this.type}-top-left.png`) &&
+            (newGrid[i - 1][j - 1]?.sprite === `${this.type}-center-left.png` ||
+              newGrid[i - 1][j - 1]?.sprite === `${this.type}-top-left.png`)
+          ) {
+            newGrid[i - 1][j + 1] = {
+              sprite: `${this.type}-corner-top-left.png`,
+            };
+          }
+
+          // CORNER TOP RIGHT
+          if (
+            (newGrid[i][j + 2]?.sprite === `${this.type}-center-top.png` ||
+              newGrid[i][j + 2]?.sprite === `${this.type}-top-right.png`) &&
+            (newGrid[i - 1][j + 1]?.sprite ===
+              `${this.type}-center-right.png` ||
+              newGrid[i - 1][j + 1]?.sprite === `${this.type}-top-right.png`)
+          ) {
+            newGrid[i][j + 1] = {
+              sprite: `${this.type}-corner-top-right.png`,
+            };
+          }
+          if (
+            (newGrid[i + 1][j + 2]?.sprite === `${this.type}-center-top.png` ||
+              newGrid[i + 1][j + 2]?.sprite === `${this.type}-top-right.png`) &&
+            (newGrid[i - 1][j + 1]?.sprite ===
+              `${this.type}-center-right.png` ||
+              newGrid[i - 1][j + 1]?.sprite === `${this.type}-top-right.png`)
+          ) {
+            newGrid[i + 1][j + 1] = {
+              sprite: `${this.type}-corner-top-right.png`,
+            };
+          }
+          if (
+            (newGrid[i - 2][j]?.sprite === `${this.type}-center-right.png` ||
+              newGrid[i - 2][j]?.sprite === `${this.type}-top-right.png`) &&
+            (newGrid[i - 1][j + 1]?.sprite === `${this.type}-center-top.png` ||
+              newGrid[i - 1][j + 1]?.sprite === `${this.type}-top-right.png`)
+          ) {
+            newGrid[i - 1][j] = {
+              sprite: `${this.type}-corner-top-right.png`,
+            };
+          }
+          if (
+            (newGrid[i - 2][j - 1]?.sprite ===
+              `${this.type}-center-right.png` ||
+              newGrid[i - 2][j - 1]?.sprite === `${this.type}-top-right.png`) &&
+            (newGrid[i - 1][j + 1]?.sprite === `${this.type}-center-top.png` ||
+              newGrid[i - 1][j + 1]?.sprite === `${this.type}-top-right.png`)
+          ) {
+            newGrid[i - 1][j - 1] = {
+              sprite: `${this.type}-corner-top-right.png`,
+            };
+          }
+
+          // CORNER BOTTOM LEFT
+          if (
+            (newGrid[i + 2][j]?.sprite === `${this.type}-center-left.png` ||
+              newGrid[i + 2][j]?.sprite === `${this.type}-bottom-left.png`) &&
+            (newGrid[i + 1][j - 1]?.sprite ===
+              `${this.type}-center-bottom.png` ||
+              newGrid[i + 1][j - 1]?.sprite === `${this.type}-bottom-left.png`)
+          ) {
+            newGrid[i + 1][j] = {
+              sprite: `${this.type}-corner-bottom-left.png`,
+            };
+          }
+          if (
+            (newGrid[i + 2][j + 1]?.sprite === `${this.type}-center-left.png` ||
+              newGrid[i + 2][j + 1]?.sprite ===
+                `${this.type}-bottom-left.png`) &&
+            (newGrid[i + 1][j - 1]?.sprite ===
+              `${this.type}-center-bottom.png` ||
+              newGrid[i + 1][j - 1]?.sprite === `${this.type}-bottom-left.png`)
+          ) {
+            newGrid[i + 1][j + 1] = {
+              sprite: `${this.type}-corner-bottom-left.png`,
+            };
+          }
+
+          if (
+            (newGrid[i + 1][j - 1]?.sprite === `${this.type}-center-left.png` ||
+              newGrid[i + 1][j - 1]?.sprite ===
+                `${this.type}-bottom-left.png`) &&
+            (newGrid[i][j - 2]?.sprite === `${this.type}-center-bottom.png` ||
+              newGrid[i][j - 2]?.sprite === `${this.type}-bottom-left.png`)
+          ) {
+            newGrid[i][j - 1] = {
+              sprite: `${this.type}-corner-bottom-left.png`,
+            };
+          }
+          if (
+            (newGrid[i + 1][j - 1]?.sprite === `${this.type}-center-left.png` ||
+              newGrid[i + 1][j - 1]?.sprite ===
+                `${this.type}-bottom-left.png`) &&
+            (newGrid[i - 1][j - 2]?.sprite ===
+              `${this.type}-center-bottom.png` ||
+              newGrid[i - 1][j - 2]?.sprite === `${this.type}-bottom-left.png`)
+          ) {
+            newGrid[i - 1][j - 1] = {
+              sprite: `${this.type}-corner-bottom-left.png`,
+            };
+          }
+
+          // CORNER BOTTOM RIGHT
+          if (
+            (newGrid[i + 2][j]?.sprite === `${this.type}-center-right.png` ||
+              newGrid[i + 2][j]?.sprite === `${this.type}-bottom-right.png`) &&
+            (newGrid[i + 1][j + 1]?.sprite ===
+              `${this.type}-center-bottom.png` ||
+              newGrid[i + 1][j + 1]?.sprite === `${this.type}-bottom-right.png`)
+          ) {
+            newGrid[i + 1][j] = {
+              sprite: `${this.type}-corner-bottom-right.png`,
+            };
+          }
+          if (
+            (newGrid[i + 2][j - 1]?.sprite ===
+              `${this.type}-center-right.png` ||
+              newGrid[i + 2][j - 1]?.sprite ===
+                `${this.type}-bottom-right.png`) &&
+            (newGrid[i + 1][j + 1]?.sprite ===
+              `${this.type}-center-bottom.png` ||
+              newGrid[i + 1][j + 1]?.sprite === `${this.type}-bottom-right.png`)
+          ) {
+            newGrid[i + 1][j - 1] = {
+              sprite: `${this.type}-corner-bottom-right.png`,
+            };
+          }
+
+          if (
+            (newGrid[i][j + 2]?.sprite === `${this.type}-center-bottom.png` ||
+              newGrid[i][j + 2]?.sprite === `${this.type}-bottom-right.png`) &&
+            (newGrid[i + 1][j + 1]?.sprite ===
+              `${this.type}-center-bottom.png` ||
+              newGrid[i + 1][j + 1]?.sprite === `${this.type}-bottom-right.png`)
+          ) {
+            newGrid[i][j + 1] = {
+              sprite: `${this.type}-corner-bottom-right.png`,
+            };
+          }
+
+          if (
+            (newGrid[i - 1][j + 2]?.sprite ===
+              `${this.type}-center-bottom.png` ||
+              newGrid[i - 1][j + 2]?.sprite ===
+                `${this.type}-bottom-right.png`) &&
+            (newGrid[i + 1][j + 1]?.sprite ===
+              `${this.type}-center-bottom.png` ||
+              newGrid[i + 1][j + 1]?.sprite ===
+                `${this.type}-bottom-right.png` ||
+              newGrid[i][j + 1]?.sprite === `${this.type}-bottom-right.png` ||
+              newGrid[i][j + 1]?.sprite === `${this.type}-center-right.png`)
+          ) {
+            console.log("here");
+            newGrid[i - 1][j + 1] = {
+              sprite: `${this.type}-corner-bottom-right.png`,
+            };
+          }
+
+          // FINAL CENTER
+          if (
+            newGrid[i - 2][j]?.sprite === `${this.type}-center.png` &&
+            newGrid[i][j]?.sprite === `${this.type}-center.png`
+          )
+            newGrid[i - 1][j] = {
+              sprite: `${this.type}-center.png`,
+            };
+          if (
+            newGrid[i + 2][j]?.sprite === `${this.type}-center.png` &&
+            newGrid[i][j]?.sprite === `${this.type}-center.png`
+          )
+            newGrid[i + 1][j] = {
+              sprite: `${this.type}-center.png`,
+            };
+        }
+      }
+    }
+    return newGrid;
+  }
+}
+
+class Sand extends Zone {
+  type = "sand";
+}
+
+class Water extends Zone {
+  type = "water";
+}
+
+class Grass extends Zone {
+  type = "grass";
+}
+
 type Grid = Array<Array<{ sprite: string | null }>>;
 
 function erase(prevGrid: Grid, row: number, col: number, brushSize: number) {
@@ -35,262 +359,280 @@ function erase(prevGrid: Grid, row: number, col: number, brushSize: number) {
   return newGrid;
 }
 
-function paint(
-  prevGrid: Grid,
-  row: number,
-  col: number,
-  brushSize: number,
-  selectedSprite: string | null
-) {
-  const newGrid = [...prevGrid];
-  for (let i = row; i <= row + brushSize - 1; i++) {
-    for (let j = col; j <= col + brushSize - 1; j++) {
-      if (i >= 0 && i < newGrid.length && j >= 0 && j < newGrid[0].length) {
-        if (selectedSprite === "sand-center.png") {
-          newGrid[i][j] = {
-            sprite: selectedSprite,
-          };
-          if (newGrid[i + 1][j]?.sprite !== "sand-center.png") {
-            newGrid[i + 1][j] = {
-              sprite: "sand-center-bottom.png",
-            };
-          }
-          if (newGrid[i - 1][j]?.sprite !== "sand-center.png") {
-            newGrid[i - 1][j] = {
-              sprite: "sand-center-top.png",
-            };
-          }
-          if (newGrid[i][j + 1]?.sprite !== "sand-center.png") {
-            newGrid[i][j + 1] = {
-              sprite: "sand-center-right.png",
-            };
-          }
-          if (newGrid[i][j - 1]?.sprite !== "sand-center.png") {
-            newGrid[i][j - 1] = {
-              sprite: "sand-center-left.png",
-            };
-          }
-          if (
-            newGrid[i + 1][j + 1]?.sprite !== "sand-center.png" &&
-            newGrid[i + 1][j + 1]?.sprite !== "sand-center-right.png" &&
-            newGrid[i + 1][j + 1]?.sprite !== "sand-center-bottom.png"
-          ) {
-            newGrid[i + 1][j + 1] = {
-              sprite: "sand-bottom-right.png",
-            };
-          }
-          if (
-            newGrid[i + 1][j - 1]?.sprite !== "sand-center.png" &&
-            newGrid[i + 1][j - 1]?.sprite !== "sand-center-left.png" &&
-            newGrid[i + 1][j - 1]?.sprite !== "sand-center-bottom.png"
-          ) {
-            newGrid[i + 1][j - 1] = {
-              sprite: "sand-bottom-left.png",
-            };
-          }
-          if (
-            newGrid[i - 1][j + 1]?.sprite !== "sand-center.png" &&
-            newGrid[i - 1][j + 1]?.sprite !== "sand-center-right.png" &&
-            newGrid[i - 1][j + 1]?.sprite !== "sand-center-top.png"
-          ) {
-            newGrid[i - 1][j + 1] = {
-              sprite: "sand-top-right.png",
-            };
-          }
-          if (
-            newGrid[i - 1][j - 1]?.sprite !== "sand-center.png" &&
-            newGrid[i - 1][j - 1]?.sprite !== "sand-center-left.png" &&
-            newGrid[i - 1][j - 1]?.sprite !== "sand-center-top.png"
-          ) {
-            newGrid[i - 1][j - 1] = {
-              sprite: "sand-top-left.png",
-            };
-          }
-          // CORNER TOP LEFT
-          if (
-            (newGrid[i][j - 2]?.sprite === "sand-center-top.png" ||
-              newGrid[i][j - 2]?.sprite === "sand-top-left.png") &&
-            (newGrid[i - 1][j - 1]?.sprite === "sand-center-left.png" ||
-              newGrid[i - 1][j - 1]?.sprite === "sand-top-left.png")
-          ) {
-            newGrid[i][j - 1] = {
-              sprite: "sand-corner-top-left.png",
-            };
-          }
-          if (
-            (newGrid[i + 1][j - 2]?.sprite === "sand-center-top.png" ||
-              newGrid[i + 1][j - 2]?.sprite === "sand-top-left.png") &&
-            (newGrid[i - 1][j - 1]?.sprite === "sand-center-left.png" ||
-              newGrid[i - 1][j - 1]?.sprite === "sand-top-left.png")
-          ) {
-            newGrid[i + 1][j - 1] = {
-              sprite: "sand-corner-top-left.png",
-            };
-          }
+// function paint(
+//   prevGrid: Grid,
+//   row: number,
+//   col: number,
+//   brushSize: number,
+//   selectedSprite: string | null
+// ) {
+//   const newGrid = [...prevGrid];
+//   for (let i = row; i <= row + brushSize - 1; i++) {
+//     for (let j = col; j <= col + brushSize - 1; j++) {
+//       if (i >= 0 && i < newGrid.length && j >= 0 && j < newGrid[0].length) {
+//         if (selectedSprite === `${this.type}-center.png`) {
+//           newGrid[i][j] = {
+//             sprite: selectedSprite,
+//           };
+//           if (newGrid[i + 1][j]?.sprite !== `${this.type}-center.png`) {
+//             newGrid[i + 1][j] = {
+//               sprite: `${this.type}-center-bottom.png`,
+//             };
+//           }
+//           if (newGrid[i - 1][j]?.sprite !== `${this.type}-center.png`) {
+//             newGrid[i - 1][j] = {
+//               sprite: `${this.type}-center-top.png`,
+//             };
+//           }
+//           if (newGrid[i][j + 1]?.sprite !== `${this.type}-center.png`) {
+//             newGrid[i][j + 1] = {
+//               sprite: `${this.type}-center-right.png`,
+//             };
+//           }
+//           if (newGrid[i][j - 1]?.sprite !== `${this.type}-center.png`) {
+//             newGrid[i][j - 1] = {
+//               sprite: `${this.type}-center-left.png`,
+//             };
+//           }
+//           if (
+//             newGrid[i + 1][j + 1]?.sprite !== `${this.type}-center.png` &&
+//             newGrid[i + 1][j + 1]?.sprite !== `${this.type}-center-right.png` &&
+//             newGrid[i + 1][j + 1]?.sprite !== `${this.type}-center-bottom.png`
+//           ) {
+//             newGrid[i + 1][j + 1] = {
+//               sprite: `${this.type}-bottom-right.png`,
+//             };
+//           }
+//           if (
+//             newGrid[i + 1][j - 1]?.sprite !== `${this.type}-center.png` &&
+//             newGrid[i + 1][j - 1]?.sprite !== `${this.type}-center-left.png` &&
+//             newGrid[i + 1][j - 1]?.sprite !== `${this.type}-center-bottom.png`
+//           ) {
+//             newGrid[i + 1][j - 1] = {
+//               sprite: `${this.type}-bottom-left.png`,
+//             };
+//           }
+//           if (
+//             newGrid[i - 1][j + 1]?.sprite !== `${this.type}-center.png` &&
+//             newGrid[i - 1][j + 1]?.sprite !== `${this.type}-center-right.png` &&
+//             newGrid[i - 1][j + 1]?.sprite !== `${this.type}-center-top.png`
+//           ) {
+//             newGrid[i - 1][j + 1] = {
+//               sprite: `${this.type}-top-right.png`,
+//             };
+//           }
+//           if (
+//             newGrid[i - 1][j - 1]?.sprite !== `${this.type}-center.png` &&
+//             newGrid[i - 1][j - 1]?.sprite !== `${this.type}-center-left.png` &&
+//             newGrid[i - 1][j - 1]?.sprite !== `${this.type}-center-top.png`
+//           ) {
+//             newGrid[i - 1][j - 1] = {
+//               sprite: `${this.type}-top-left.png`,
+//             };
+//           }
+//           // CORNER TOP LEFT
+//           if (
+//             (newGrid[i][j - 2]?.sprite === `${this.type}-center-top.png` ||
+//               newGrid[i][j - 2]?.sprite === `${this.type}-top-left.png`) &&
+//             (newGrid[i - 1][j - 1]?.sprite === `${this.type}-center-left.png` ||
+//               newGrid[i - 1][j - 1]?.sprite === `${this.type}-top-left.png`)
+//           ) {
+//             newGrid[i][j - 1] = {
+//               sprite: `${this.type}-corner-top-left.png`,
+//             };
+//           }
+//           if (
+//             (newGrid[i + 1][j - 2]?.sprite === `${this.type}-center-top.png` ||
+//               newGrid[i + 1][j - 2]?.sprite === `${this.type}-top-left.png`) &&
+//             (newGrid[i - 1][j - 1]?.sprite === `${this.type}-center-left.png` ||
+//               newGrid[i - 1][j - 1]?.sprite === `${this.type}-top-left.png`)
+//           ) {
+//             newGrid[i + 1][j - 1] = {
+//               sprite: `${this.type}-corner-top-left.png`,
+//             };
+//           }
 
-          if (
-            (newGrid[i - 2][j]?.sprite === "sand-center-left.png" ||
-              newGrid[i - 2][j]?.sprite === "sand-top-left.png") &&
-            (newGrid[i - 1][j - 1]?.sprite === "sand-center-left.png" ||
-              newGrid[i - 1][j - 1]?.sprite === "sand-top-left.png")
-          ) {
-            newGrid[i - 1][j] = {
-              sprite: "sand-corner-top-left.png",
-            };
-          }
-          if (
-            (newGrid[i - 2][j + 1]?.sprite === "sand-center-left.png" ||
-              newGrid[i - 2][j + 1]?.sprite === "sand-top-left.png") &&
-            (newGrid[i - 1][j - 1]?.sprite === "sand-center-left.png" ||
-              newGrid[i - 1][j - 1]?.sprite === "sand-top-left.png")
-          ) {
-            newGrid[i - 1][j + 1] = {
-              sprite: "sand-corner-top-left.png",
-            };
-          }
+//           if (
+//             (newGrid[i - 2][j]?.sprite === `${this.type}-center-left.png` ||
+//               newGrid[i - 2][j]?.sprite === `${this.type}-top-left.png`) &&
+//             (newGrid[i - 1][j - 1]?.sprite === `${this.type}-center-left.png` ||
+//               newGrid[i - 1][j - 1]?.sprite === `${this.type}-top-left.png`)
+//           ) {
+//             newGrid[i - 1][j] = {
+//               sprite: `${this.type}-corner-top-left.png`,
+//             };
+//           }
+//           if (
+//             (newGrid[i - 2][j + 1]?.sprite === `${this.type}-center-left.png` ||
+//               newGrid[i - 2][j + 1]?.sprite === `${this.type}-top-left.png`) &&
+//             (newGrid[i - 1][j - 1]?.sprite === `${this.type}-center-left.png` ||
+//               newGrid[i - 1][j - 1]?.sprite === `${this.type}-top-left.png`)
+//           ) {
+//             newGrid[i - 1][j + 1] = {
+//               sprite: `${this.type}-corner-top-left.png`,
+//             };
+//           }
 
-          // CORNER TOP RIGHT
-          if (
-            (newGrid[i][j + 2]?.sprite === "sand-center-top.png" ||
-              newGrid[i][j + 2]?.sprite === "sand-top-right.png") &&
-            (newGrid[i - 1][j + 1]?.sprite === "sand-center-right.png" ||
-              newGrid[i - 1][j + 1]?.sprite === "sand-top-right.png")
-          ) {
-            newGrid[i][j + 1] = {
-              sprite: "sand-corner-top-right.png",
-            };
-          }
-          if (
-            (newGrid[i + 1][j + 2]?.sprite === "sand-center-top.png" ||
-              newGrid[i + 1][j + 2]?.sprite === "sand-top-right.png") &&
-            (newGrid[i - 1][j + 1]?.sprite === "sand-center-right.png" ||
-              newGrid[i - 1][j + 1]?.sprite === "sand-top-right.png")
-          ) {
-            newGrid[i + 1][j + 1] = {
-              sprite: "sand-corner-top-right.png",
-            };
-          }
-          if (
-            (newGrid[i - 2][j]?.sprite === "sand-center-right.png" ||
-              newGrid[i - 2][j]?.sprite === "sand-top-right.png") &&
-            (newGrid[i - 1][j + 1]?.sprite === "sand-center-top.png" ||
-              newGrid[i - 1][j + 1]?.sprite === "sand-top-right.png")
-          ) {
-            newGrid[i - 1][j] = {
-              sprite: "sand-corner-top-right.png",
-            };
-          }
-          if (
-            (newGrid[i - 2][j - 1]?.sprite === "sand-center-right.png" ||
-              newGrid[i - 2][j - 1]?.sprite === "sand-top-right.png") &&
-            (newGrid[i - 1][j + 1]?.sprite === "sand-center-top.png" ||
-              newGrid[i - 1][j + 1]?.sprite === "sand-top-right.png")
-          ) {
-            newGrid[i - 1][j - 1] = {
-              sprite: "sand-corner-top-right.png",
-            };
-          }
+//           // CORNER TOP RIGHT
+//           if (
+//             (newGrid[i][j + 2]?.sprite === `${this.type}-center-top.png` ||
+//               newGrid[i][j + 2]?.sprite === `${this.type}-top-right.png`) &&
+//             (newGrid[i - 1][j + 1]?.sprite ===
+//               `${this.type}-center-right.png` ||
+//               newGrid[i - 1][j + 1]?.sprite === `${this.type}-top-right.png`)
+//           ) {
+//             newGrid[i][j + 1] = {
+//               sprite: `${this.type}-corner-top-right.png`,
+//             };
+//           }
+//           if (
+//             (newGrid[i + 1][j + 2]?.sprite === `${this.type}-center-top.png` ||
+//               newGrid[i + 1][j + 2]?.sprite === `${this.type}-top-right.png`) &&
+//             (newGrid[i - 1][j + 1]?.sprite ===
+//               `${this.type}-center-right.png` ||
+//               newGrid[i - 1][j + 1]?.sprite === `${this.type}-top-right.png`)
+//           ) {
+//             newGrid[i + 1][j + 1] = {
+//               sprite: `${this.type}-corner-top-right.png`,
+//             };
+//           }
+//           if (
+//             (newGrid[i - 2][j]?.sprite === `${this.type}-center-right.png` ||
+//               newGrid[i - 2][j]?.sprite === `${this.type}-top-right.png`) &&
+//             (newGrid[i - 1][j + 1]?.sprite === `${this.type}-center-top.png` ||
+//               newGrid[i - 1][j + 1]?.sprite === `${this.type}-top-right.png`)
+//           ) {
+//             newGrid[i - 1][j] = {
+//               sprite: `${this.type}-corner-top-right.png`,
+//             };
+//           }
+//           if (
+//             (newGrid[i - 2][j - 1]?.sprite ===
+//               `${this.type}-center-right.png` ||
+//               newGrid[i - 2][j - 1]?.sprite === `${this.type}-top-right.png`) &&
+//             (newGrid[i - 1][j + 1]?.sprite === `${this.type}-center-top.png` ||
+//               newGrid[i - 1][j + 1]?.sprite === `${this.type}-top-right.png`)
+//           ) {
+//             newGrid[i - 1][j - 1] = {
+//               sprite: `${this.type}-corner-top-right.png`,
+//             };
+//           }
 
-          // CORNER BOTTOM LEFT
-          if (
-            (newGrid[i + 2][j]?.sprite === "sand-center-left.png" ||
-              newGrid[i + 2][j]?.sprite === "sand-bottom-left.png") &&
-            (newGrid[i + 1][j - 1]?.sprite === "sand-center-bottom.png" ||
-              newGrid[i + 1][j - 1]?.sprite === "sand-bottom-left.png")
-          ) {
-            newGrid[i + 1][j] = {
-              sprite: "sand-corner-bottom-left.png",
-            };
-          }
-          if (
-            (newGrid[i + 2][j + 1]?.sprite === "sand-center-left.png" ||
-              newGrid[i + 2][j + 1]?.sprite === "sand-bottom-left.png") &&
-            (newGrid[i + 1][j - 1]?.sprite === "sand-center-bottom.png" ||
-              newGrid[i + 1][j - 1]?.sprite === "sand-bottom-left.png")
-          ) {
-            newGrid[i + 1][j + 1] = {
-              sprite: "sand-corner-bottom-left.png",
-            };
-          }
+//           // CORNER BOTTOM LEFT
+//           if (
+//             (newGrid[i + 2][j]?.sprite === `${this.type}-center-left.png` ||
+//               newGrid[i + 2][j]?.sprite === `${this.type}-bottom-left.png`) &&
+//             (newGrid[i + 1][j - 1]?.sprite ===
+//               `${this.type}-center-bottom.png` ||
+//               newGrid[i + 1][j - 1]?.sprite === `${this.type}-bottom-left.png`)
+//           ) {
+//             newGrid[i + 1][j] = {
+//               sprite: `${this.type}-corner-bottom-left.png`,
+//             };
+//           }
+//           if (
+//             (newGrid[i + 2][j + 1]?.sprite === `${this.type}-center-left.png` ||
+//               newGrid[i + 2][j + 1]?.sprite ===
+//                 `${this.type}-bottom-left.png`) &&
+//             (newGrid[i + 1][j - 1]?.sprite ===
+//               `${this.type}-center-bottom.png` ||
+//               newGrid[i + 1][j - 1]?.sprite === `${this.type}-bottom-left.png`)
+//           ) {
+//             newGrid[i + 1][j + 1] = {
+//               sprite: `${this.type}-corner-bottom-left.png`,
+//             };
+//           }
 
-          if (
-            (newGrid[i + 1][j - 1]?.sprite === "sand-center-left.png" ||
-              newGrid[i + 1][j - 1]?.sprite === "sand-bottom-left.png") &&
-            (newGrid[i][j - 2]?.sprite === "sand-center-bottom.png" ||
-              newGrid[i][j - 2]?.sprite === "sand-bottom-left.png")
-          ) {
-            newGrid[i][j - 1] = {
-              sprite: "sand-corner-bottom-left.png",
-            };
-          }
-          if (
-            (newGrid[i + 1][j - 1]?.sprite === "sand-center-left.png" ||
-              newGrid[i + 1][j - 1]?.sprite === "sand-bottom-left.png") &&
-            (newGrid[i - 1][j - 2]?.sprite === "sand-center-bottom.png" ||
-              newGrid[i - 1][j - 2]?.sprite === "sand-bottom-left.png")
-          ) {
-            newGrid[i - 1][j - 1] = {
-              sprite: "sand-corner-bottom-left.png",
-            };
-          }
+//           if (
+//             (newGrid[i + 1][j - 1]?.sprite === `${this.type}-center-left.png` ||
+//               newGrid[i + 1][j - 1]?.sprite ===
+//                 `${this.type}-bottom-left.png`) &&
+//             (newGrid[i][j - 2]?.sprite === `${this.type}-center-bottom.png` ||
+//               newGrid[i][j - 2]?.sprite === `${this.type}-bottom-left.png`)
+//           ) {
+//             newGrid[i][j - 1] = {
+//               sprite: `${this.type}-corner-bottom-left.png`,
+//             };
+//           }
+//           if (
+//             (newGrid[i + 1][j - 1]?.sprite === `${this.type}-center-left.png` ||
+//               newGrid[i + 1][j - 1]?.sprite ===
+//                 `${this.type}-bottom-left.png`) &&
+//             (newGrid[i - 1][j - 2]?.sprite ===
+//               `${this.type}-center-bottom.png` ||
+//               newGrid[i - 1][j - 2]?.sprite === `${this.type}-bottom-left.png`)
+//           ) {
+//             newGrid[i - 1][j - 1] = {
+//               sprite: `${this.type}-corner-bottom-left.png`,
+//             };
+//           }
 
-          // CORNER BOTTOM RIGHT
-          if (
-            (newGrid[i + 2][j]?.sprite === "sand-center-right.png" ||
-              newGrid[i + 2][j]?.sprite === "sand-bottom-right.png") &&
-            (newGrid[i + 1][j + 1]?.sprite === "sand-center-bottom.png" ||
-              newGrid[i + 1][j + 1]?.sprite === "sand-bottom-right.png")
-          ) {
-            newGrid[i + 1][j] = {
-              sprite: "sand-corner-bottom-right.png",
-            };
-          }
-          if (
-            (newGrid[i + 2][j - 1]?.sprite === "sand-center-right.png" ||
-              newGrid[i + 2][j - 1]?.sprite === "sand-bottom-right.png") &&
-            (newGrid[i + 1][j + 1]?.sprite === "sand-center-bottom.png" ||
-              newGrid[i + 1][j + 1]?.sprite === "sand-bottom-right.png")
-          ) {
-            newGrid[i + 1][j - 1] = {
-              sprite: "sand-corner-bottom-right.png",
-            };
-          }
+//           // CORNER BOTTOM RIGHT
+//           if (
+//             (newGrid[i + 2][j]?.sprite === `${this.type}-center-right.png` ||
+//               newGrid[i + 2][j]?.sprite === `${this.type}-bottom-right.png`) &&
+//             (newGrid[i + 1][j + 1]?.sprite ===
+//               `${this.type}-center-bottom.png` ||
+//               newGrid[i + 1][j + 1]?.sprite === `${this.type}-bottom-right.png`)
+//           ) {
+//             newGrid[i + 1][j] = {
+//               sprite: `${this.type}-corner-bottom-right.png`,
+//             };
+//           }
+//           if (
+//             (newGrid[i + 2][j - 1]?.sprite ===
+//               `${this.type}-center-right.png` ||
+//               newGrid[i + 2][j - 1]?.sprite ===
+//                 `${this.type}-bottom-right.png`) &&
+//             (newGrid[i + 1][j + 1]?.sprite ===
+//               `${this.type}-center-bottom.png` ||
+//               newGrid[i + 1][j + 1]?.sprite === `${this.type}-bottom-right.png`)
+//           ) {
+//             newGrid[i + 1][j - 1] = {
+//               sprite: `${this.type}-corner-bottom-right.png`,
+//             };
+//           }
 
-          if (
-            (newGrid[i][j + 2]?.sprite === "sand-center-bottom.png" ||
-              newGrid[i][j + 2]?.sprite === "sand-bottom-right.png") &&
-            (newGrid[i + 1][j + 1]?.sprite === "sand-center-bottom.png" ||
-              newGrid[i + 1][j + 1]?.sprite === "sand-bottom-right.png")
-          ) {
-            newGrid[i][j + 1] = {
-              sprite: "sand-corner-bottom-right.png",
-            };
-          }
-          if (
-            (newGrid[i - 1][j + 2]?.sprite === "sand-center-bottom.png" ||
-              newGrid[i - 1][j + 2]?.sprite === "sand-bottom-right.png") &&
-            (newGrid[i + 1][j + 1]?.sprite === "sand-center-bottom.png" ||
-              newGrid[i + 1][j + 1]?.sprite === "sand-bottom-right.png")
-          ) {
-            newGrid[i - 1][j + 1] = {
-              sprite: "sand-corner-bottom-right.png",
-            };
-          }
-        } else {
-          newGrid[i][j] = {
-            sprite: selectedSprite,
-          };
-        }
-      }
-    }
-  }
-  return newGrid;
-}
+//           if (
+//             (newGrid[i][j + 2]?.sprite === `${this.type}-center-bottom.png` ||
+//               newGrid[i][j + 2]?.sprite === `${this.type}-bottom-right.png`) &&
+//             (newGrid[i + 1][j + 1]?.sprite ===
+//               `${this.type}-center-bottom.png` ||
+//               newGrid[i + 1][j + 1]?.sprite === `${this.type}-bottom-right.png`)
+//           ) {
+//             newGrid[i][j + 1] = {
+//               sprite: `${this.type}-corner-bottom-right.png`,
+//             };
+//           }
+//           if (
+//             (newGrid[i - 1][j + 2]?.sprite ===
+//               `${this.type}-center-bottom.png` ||
+//               newGrid[i - 1][j + 2]?.sprite ===
+//                 `${this.type}-bottom-right.png`) &&
+//             (newGrid[i + 1][j + 1]?.sprite ===
+//               `${this.type}-center-bottom.png` ||
+//               newGrid[i + 1][j + 1]?.sprite === `${this.type}-bottom-right.png`)
+//           ) {
+//             newGrid[i - 1][j + 1] = {
+//               sprite: `${this.type}-corner-bottom-right.png`,
+//             };
+//           }
+//         } else {
+//           newGrid[i][j] = {
+//             sprite: selectedSprite,
+//           };
+//         }
+//       }
+//     }
+//   }
+//   return newGrid;
+// }
 
 export function MapBuilder() {
   const [currentTool, setCurrentTool] = useState<"brush" | "eraser">("brush");
   const [brushSize, setBrushSize] = useState(1);
   const [selectedSprite, setSelectedSprite] = useState<string | null>(null);
+  const [selectedZone, setSelectedZone] = useState<string | null>(null);
 
   const [grid, setGrid] = useState<Array<Array<{ sprite: string | null }>>>(
     Array.from({ length: 40 }, () =>
@@ -309,9 +651,23 @@ export function MapBuilder() {
     if (currentTool === "eraser") {
       setGrid((prevGrid) => erase(prevGrid, row, col, brushSize));
     } else {
-      setGrid((prevGrid) =>
-        paint(prevGrid, row, col, brushSize, selectedSprite)
-      );
+      setGrid((prevGrid) => {
+        let zone: Zone | null = null;
+        switch (selectedZone) {
+          case "sand":
+            zone = new Sand();
+            break;
+          case "water":
+            zone = new Water();
+            break;
+          case "grass":
+            zone = new Grass();
+            break;
+        }
+        if (!zone) return prevGrid;
+
+        return zone.paint(prevGrid, row, col, brushSize);
+      });
     }
   };
 
@@ -387,7 +743,63 @@ export function MapBuilder() {
       </Frame>
       <div className="relative">
         <MenuList inline style={{ width: 800 }}>
-          {[...SPRITES].splice(0, 15).map((sprite, i) => (
+          <MenuListItem
+            as="button"
+            data-zone-name="sand"
+            onClick={(ev: SyntheticEvent) => {
+              const target = ev.currentTarget as HTMLButtonElement;
+              setCurrentTool("brush");
+              setSelectedZone(target.dataset.zoneName as string);
+            }}
+            className={cn({
+              "bg-teal-600": selectedZone === "sand" && currentTool === "brush",
+            })}
+          >
+            <img
+              src={"/src/assets/sprites/sand-center.png"}
+              alt="sand-center"
+              style={{ minWidth: CELL_SIZE, height: CELL_SIZE }}
+            />
+          </MenuListItem>
+          <MenuListItem
+            as="button"
+            data-zone-name="water"
+            onClick={(ev: SyntheticEvent) => {
+              const target = ev.currentTarget as HTMLButtonElement;
+              setCurrentTool("brush");
+              setSelectedZone(target.dataset.zoneName as string);
+            }}
+            className={cn({
+              "bg-teal-600":
+                selectedZone === "water" && currentTool === "brush",
+            })}
+          >
+            <img
+              src={"/src/assets/sprites/water-center.png"}
+              alt={`water-center`}
+              style={{ minWidth: CELL_SIZE, height: CELL_SIZE }}
+            />
+          </MenuListItem>
+          <MenuListItem
+            as="button"
+            data-zone-name="grass"
+            onClick={(ev: SyntheticEvent) => {
+              const target = ev.currentTarget as HTMLButtonElement;
+              setCurrentTool("brush");
+              setSelectedZone(target.dataset.zoneName as string);
+            }}
+            className={cn({
+              "bg-teal-600":
+                selectedZone === "grass" && currentTool === "brush",
+            })}
+          >
+            <img
+              src={"/src/assets/sprites/grass-center.png"}
+              alt="grass-center"
+              style={{ minWidth: CELL_SIZE, height: CELL_SIZE }}
+            />
+          </MenuListItem>
+          {/* {[...SPRITES].splice(0, 10).map((sprite, i) => (
             <MenuListItem
               key={i}
               as="button"
@@ -408,7 +820,7 @@ export function MapBuilder() {
                 style={{ minWidth: CELL_SIZE, height: CELL_SIZE }}
               />
             </MenuListItem>
-          ))}
+          ))} */}
           <Handle size={38} />
           <DialogRoot>
             <DialogTrigger asChild>
