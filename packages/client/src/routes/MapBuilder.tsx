@@ -19,6 +19,47 @@ const SPRITES = Object.values(
   })
 );
 
+class SmallTree {
+  paint(prevGrid: Grid, row: number, col: number) {
+    const newGrid = [...prevGrid];
+    newGrid[row][col] = {
+      sprite: "small-tree-0.png",
+    };
+    newGrid[row - 1][col] = {
+      sprite: "small-tree-1.png",
+    };
+    newGrid[row - 2][col] = {
+      sprite: "small-tree-2.png",
+    };
+    return newGrid;
+  }
+}
+
+class MediumTree {
+  paint(prevGrid: Grid, row: number, col: number) {
+    const newGrid = [...prevGrid];
+    newGrid[row][col] = {
+      sprite: "medium-tree-0-0.png",
+    };
+    newGrid[row][col + 1] = {
+      sprite: "medium-tree-1-0.png",
+    };
+    newGrid[row - 1][col] = {
+      sprite: "medium-tree-0-1.png",
+    };
+    newGrid[row - 1][col + 1] = {
+      sprite: "medium-tree-1-1.png",
+    };
+    newGrid[row - 2][col] = {
+      sprite: "medium-tree-0-2.png",
+    };
+    newGrid[row - 2][col + 1] = {
+      sprite: "medium-tree-1-2.png",
+    };
+    return newGrid;
+  }
+}
+
 class Zone {
   type: string | null = null;
 
@@ -27,7 +68,12 @@ class Zone {
     const newGrid = [...prevGrid];
     for (let i = row; i <= row + brushSize - 1; i++) {
       for (let j = col; j <= col + brushSize - 1; j++) {
-        if (i >= 0 && i < newGrid.length && j >= 0 && j < newGrid[0].length) {
+        if (
+          i - 2 >= 0 &&
+          i + 2 < newGrid.length &&
+          j - 2 >= 0 &&
+          j + 2 < newGrid[0].length
+        ) {
           newGrid[i][j] = {
             sprite: `${this.type}-center.png`,
           };
@@ -303,7 +349,6 @@ class Zone {
               newGrid[i][j + 1]?.sprite === `${this.type}-bottom-right.png` ||
               newGrid[i][j + 1]?.sprite === `${this.type}-center-right.png`)
           ) {
-            console.log("here");
             newGrid[i - 1][j + 1] = {
               sprite: `${this.type}-corner-bottom-right.png`,
             };
@@ -359,280 +404,34 @@ function erase(prevGrid: Grid, row: number, col: number, brushSize: number) {
   return newGrid;
 }
 
-// function paint(
-//   prevGrid: Grid,
-//   row: number,
-//   col: number,
-//   brushSize: number,
-//   selectedSprite: string | null
-// ) {
-//   const newGrid = [...prevGrid];
-//   for (let i = row; i <= row + brushSize - 1; i++) {
-//     for (let j = col; j <= col + brushSize - 1; j++) {
-//       if (i >= 0 && i < newGrid.length && j >= 0 && j < newGrid[0].length) {
-//         if (selectedSprite === `${this.type}-center.png`) {
-//           newGrid[i][j] = {
-//             sprite: selectedSprite,
-//           };
-//           if (newGrid[i + 1][j]?.sprite !== `${this.type}-center.png`) {
-//             newGrid[i + 1][j] = {
-//               sprite: `${this.type}-center-bottom.png`,
-//             };
-//           }
-//           if (newGrid[i - 1][j]?.sprite !== `${this.type}-center.png`) {
-//             newGrid[i - 1][j] = {
-//               sprite: `${this.type}-center-top.png`,
-//             };
-//           }
-//           if (newGrid[i][j + 1]?.sprite !== `${this.type}-center.png`) {
-//             newGrid[i][j + 1] = {
-//               sprite: `${this.type}-center-right.png`,
-//             };
-//           }
-//           if (newGrid[i][j - 1]?.sprite !== `${this.type}-center.png`) {
-//             newGrid[i][j - 1] = {
-//               sprite: `${this.type}-center-left.png`,
-//             };
-//           }
-//           if (
-//             newGrid[i + 1][j + 1]?.sprite !== `${this.type}-center.png` &&
-//             newGrid[i + 1][j + 1]?.sprite !== `${this.type}-center-right.png` &&
-//             newGrid[i + 1][j + 1]?.sprite !== `${this.type}-center-bottom.png`
-//           ) {
-//             newGrid[i + 1][j + 1] = {
-//               sprite: `${this.type}-bottom-right.png`,
-//             };
-//           }
-//           if (
-//             newGrid[i + 1][j - 1]?.sprite !== `${this.type}-center.png` &&
-//             newGrid[i + 1][j - 1]?.sprite !== `${this.type}-center-left.png` &&
-//             newGrid[i + 1][j - 1]?.sprite !== `${this.type}-center-bottom.png`
-//           ) {
-//             newGrid[i + 1][j - 1] = {
-//               sprite: `${this.type}-bottom-left.png`,
-//             };
-//           }
-//           if (
-//             newGrid[i - 1][j + 1]?.sprite !== `${this.type}-center.png` &&
-//             newGrid[i - 1][j + 1]?.sprite !== `${this.type}-center-right.png` &&
-//             newGrid[i - 1][j + 1]?.sprite !== `${this.type}-center-top.png`
-//           ) {
-//             newGrid[i - 1][j + 1] = {
-//               sprite: `${this.type}-top-right.png`,
-//             };
-//           }
-//           if (
-//             newGrid[i - 1][j - 1]?.sprite !== `${this.type}-center.png` &&
-//             newGrid[i - 1][j - 1]?.sprite !== `${this.type}-center-left.png` &&
-//             newGrid[i - 1][j - 1]?.sprite !== `${this.type}-center-top.png`
-//           ) {
-//             newGrid[i - 1][j - 1] = {
-//               sprite: `${this.type}-top-left.png`,
-//             };
-//           }
-//           // CORNER TOP LEFT
-//           if (
-//             (newGrid[i][j - 2]?.sprite === `${this.type}-center-top.png` ||
-//               newGrid[i][j - 2]?.sprite === `${this.type}-top-left.png`) &&
-//             (newGrid[i - 1][j - 1]?.sprite === `${this.type}-center-left.png` ||
-//               newGrid[i - 1][j - 1]?.sprite === `${this.type}-top-left.png`)
-//           ) {
-//             newGrid[i][j - 1] = {
-//               sprite: `${this.type}-corner-top-left.png`,
-//             };
-//           }
-//           if (
-//             (newGrid[i + 1][j - 2]?.sprite === `${this.type}-center-top.png` ||
-//               newGrid[i + 1][j - 2]?.sprite === `${this.type}-top-left.png`) &&
-//             (newGrid[i - 1][j - 1]?.sprite === `${this.type}-center-left.png` ||
-//               newGrid[i - 1][j - 1]?.sprite === `${this.type}-top-left.png`)
-//           ) {
-//             newGrid[i + 1][j - 1] = {
-//               sprite: `${this.type}-corner-top-left.png`,
-//             };
-//           }
-
-//           if (
-//             (newGrid[i - 2][j]?.sprite === `${this.type}-center-left.png` ||
-//               newGrid[i - 2][j]?.sprite === `${this.type}-top-left.png`) &&
-//             (newGrid[i - 1][j - 1]?.sprite === `${this.type}-center-left.png` ||
-//               newGrid[i - 1][j - 1]?.sprite === `${this.type}-top-left.png`)
-//           ) {
-//             newGrid[i - 1][j] = {
-//               sprite: `${this.type}-corner-top-left.png`,
-//             };
-//           }
-//           if (
-//             (newGrid[i - 2][j + 1]?.sprite === `${this.type}-center-left.png` ||
-//               newGrid[i - 2][j + 1]?.sprite === `${this.type}-top-left.png`) &&
-//             (newGrid[i - 1][j - 1]?.sprite === `${this.type}-center-left.png` ||
-//               newGrid[i - 1][j - 1]?.sprite === `${this.type}-top-left.png`)
-//           ) {
-//             newGrid[i - 1][j + 1] = {
-//               sprite: `${this.type}-corner-top-left.png`,
-//             };
-//           }
-
-//           // CORNER TOP RIGHT
-//           if (
-//             (newGrid[i][j + 2]?.sprite === `${this.type}-center-top.png` ||
-//               newGrid[i][j + 2]?.sprite === `${this.type}-top-right.png`) &&
-//             (newGrid[i - 1][j + 1]?.sprite ===
-//               `${this.type}-center-right.png` ||
-//               newGrid[i - 1][j + 1]?.sprite === `${this.type}-top-right.png`)
-//           ) {
-//             newGrid[i][j + 1] = {
-//               sprite: `${this.type}-corner-top-right.png`,
-//             };
-//           }
-//           if (
-//             (newGrid[i + 1][j + 2]?.sprite === `${this.type}-center-top.png` ||
-//               newGrid[i + 1][j + 2]?.sprite === `${this.type}-top-right.png`) &&
-//             (newGrid[i - 1][j + 1]?.sprite ===
-//               `${this.type}-center-right.png` ||
-//               newGrid[i - 1][j + 1]?.sprite === `${this.type}-top-right.png`)
-//           ) {
-//             newGrid[i + 1][j + 1] = {
-//               sprite: `${this.type}-corner-top-right.png`,
-//             };
-//           }
-//           if (
-//             (newGrid[i - 2][j]?.sprite === `${this.type}-center-right.png` ||
-//               newGrid[i - 2][j]?.sprite === `${this.type}-top-right.png`) &&
-//             (newGrid[i - 1][j + 1]?.sprite === `${this.type}-center-top.png` ||
-//               newGrid[i - 1][j + 1]?.sprite === `${this.type}-top-right.png`)
-//           ) {
-//             newGrid[i - 1][j] = {
-//               sprite: `${this.type}-corner-top-right.png`,
-//             };
-//           }
-//           if (
-//             (newGrid[i - 2][j - 1]?.sprite ===
-//               `${this.type}-center-right.png` ||
-//               newGrid[i - 2][j - 1]?.sprite === `${this.type}-top-right.png`) &&
-//             (newGrid[i - 1][j + 1]?.sprite === `${this.type}-center-top.png` ||
-//               newGrid[i - 1][j + 1]?.sprite === `${this.type}-top-right.png`)
-//           ) {
-//             newGrid[i - 1][j - 1] = {
-//               sprite: `${this.type}-corner-top-right.png`,
-//             };
-//           }
-
-//           // CORNER BOTTOM LEFT
-//           if (
-//             (newGrid[i + 2][j]?.sprite === `${this.type}-center-left.png` ||
-//               newGrid[i + 2][j]?.sprite === `${this.type}-bottom-left.png`) &&
-//             (newGrid[i + 1][j - 1]?.sprite ===
-//               `${this.type}-center-bottom.png` ||
-//               newGrid[i + 1][j - 1]?.sprite === `${this.type}-bottom-left.png`)
-//           ) {
-//             newGrid[i + 1][j] = {
-//               sprite: `${this.type}-corner-bottom-left.png`,
-//             };
-//           }
-//           if (
-//             (newGrid[i + 2][j + 1]?.sprite === `${this.type}-center-left.png` ||
-//               newGrid[i + 2][j + 1]?.sprite ===
-//                 `${this.type}-bottom-left.png`) &&
-//             (newGrid[i + 1][j - 1]?.sprite ===
-//               `${this.type}-center-bottom.png` ||
-//               newGrid[i + 1][j - 1]?.sprite === `${this.type}-bottom-left.png`)
-//           ) {
-//             newGrid[i + 1][j + 1] = {
-//               sprite: `${this.type}-corner-bottom-left.png`,
-//             };
-//           }
-
-//           if (
-//             (newGrid[i + 1][j - 1]?.sprite === `${this.type}-center-left.png` ||
-//               newGrid[i + 1][j - 1]?.sprite ===
-//                 `${this.type}-bottom-left.png`) &&
-//             (newGrid[i][j - 2]?.sprite === `${this.type}-center-bottom.png` ||
-//               newGrid[i][j - 2]?.sprite === `${this.type}-bottom-left.png`)
-//           ) {
-//             newGrid[i][j - 1] = {
-//               sprite: `${this.type}-corner-bottom-left.png`,
-//             };
-//           }
-//           if (
-//             (newGrid[i + 1][j - 1]?.sprite === `${this.type}-center-left.png` ||
-//               newGrid[i + 1][j - 1]?.sprite ===
-//                 `${this.type}-bottom-left.png`) &&
-//             (newGrid[i - 1][j - 2]?.sprite ===
-//               `${this.type}-center-bottom.png` ||
-//               newGrid[i - 1][j - 2]?.sprite === `${this.type}-bottom-left.png`)
-//           ) {
-//             newGrid[i - 1][j - 1] = {
-//               sprite: `${this.type}-corner-bottom-left.png`,
-//             };
-//           }
-
-//           // CORNER BOTTOM RIGHT
-//           if (
-//             (newGrid[i + 2][j]?.sprite === `${this.type}-center-right.png` ||
-//               newGrid[i + 2][j]?.sprite === `${this.type}-bottom-right.png`) &&
-//             (newGrid[i + 1][j + 1]?.sprite ===
-//               `${this.type}-center-bottom.png` ||
-//               newGrid[i + 1][j + 1]?.sprite === `${this.type}-bottom-right.png`)
-//           ) {
-//             newGrid[i + 1][j] = {
-//               sprite: `${this.type}-corner-bottom-right.png`,
-//             };
-//           }
-//           if (
-//             (newGrid[i + 2][j - 1]?.sprite ===
-//               `${this.type}-center-right.png` ||
-//               newGrid[i + 2][j - 1]?.sprite ===
-//                 `${this.type}-bottom-right.png`) &&
-//             (newGrid[i + 1][j + 1]?.sprite ===
-//               `${this.type}-center-bottom.png` ||
-//               newGrid[i + 1][j + 1]?.sprite === `${this.type}-bottom-right.png`)
-//           ) {
-//             newGrid[i + 1][j - 1] = {
-//               sprite: `${this.type}-corner-bottom-right.png`,
-//             };
-//           }
-
-//           if (
-//             (newGrid[i][j + 2]?.sprite === `${this.type}-center-bottom.png` ||
-//               newGrid[i][j + 2]?.sprite === `${this.type}-bottom-right.png`) &&
-//             (newGrid[i + 1][j + 1]?.sprite ===
-//               `${this.type}-center-bottom.png` ||
-//               newGrid[i + 1][j + 1]?.sprite === `${this.type}-bottom-right.png`)
-//           ) {
-//             newGrid[i][j + 1] = {
-//               sprite: `${this.type}-corner-bottom-right.png`,
-//             };
-//           }
-//           if (
-//             (newGrid[i - 1][j + 2]?.sprite ===
-//               `${this.type}-center-bottom.png` ||
-//               newGrid[i - 1][j + 2]?.sprite ===
-//                 `${this.type}-bottom-right.png`) &&
-//             (newGrid[i + 1][j + 1]?.sprite ===
-//               `${this.type}-center-bottom.png` ||
-//               newGrid[i + 1][j + 1]?.sprite === `${this.type}-bottom-right.png`)
-//           ) {
-//             newGrid[i - 1][j + 1] = {
-//               sprite: `${this.type}-corner-bottom-right.png`,
-//             };
-//           }
-//         } else {
-//           newGrid[i][j] = {
-//             sprite: selectedSprite,
-//           };
-//         }
-//       }
-//     }
-//   }
-//   return newGrid;
-// }
+function paint(
+  prevGrid: Grid,
+  row: number,
+  col: number,
+  brushSize: number,
+  selectedSprite: string | null
+) {
+  const newGrid = [...prevGrid];
+  for (let i = row; i <= row + brushSize - 1; i++) {
+    for (let j = col; j <= col + brushSize - 1; j++) {
+      if (i >= 0 && i < newGrid.length && j >= 0 && j < newGrid[0].length) {
+        newGrid[i][j] = {
+          sprite: selectedSprite,
+        };
+      }
+    }
+  }
+  return newGrid;
+}
 
 export function MapBuilder() {
   const [currentTool, setCurrentTool] = useState<"brush" | "eraser">("brush");
   const [brushSize, setBrushSize] = useState(1);
   const [selectedSprite, setSelectedSprite] = useState<string | null>(null);
   const [selectedZone, setSelectedZone] = useState<string | null>(null);
+  const [selectedStructure, setSelectedStructure] = useState<string | null>(
+    null
+  );
 
   const [grid, setGrid] = useState<Array<Array<{ sprite: string | null }>>>(
     Array.from({ length: 40 }, () =>
@@ -643,6 +442,7 @@ export function MapBuilder() {
   );
 
   const paintOnCell = (el: HTMLButtonElement) => {
+    if (!el) return;
     const row = parseInt(el.dataset.row as string);
     const col = parseInt(el.dataset.col as string);
 
@@ -652,21 +452,26 @@ export function MapBuilder() {
       setGrid((prevGrid) => erase(prevGrid, row, col, brushSize));
     } else {
       setGrid((prevGrid) => {
-        let zone: Zone | null = null;
-        switch (selectedZone) {
-          case "sand":
-            zone = new Sand();
-            break;
-          case "water":
-            zone = new Water();
-            break;
-          case "grass":
-            zone = new Grass();
-            break;
+        if (selectedZone) {
+          switch (selectedZone) {
+            case "sand":
+              return new Sand().paint(prevGrid, row, col, brushSize);
+            case "water":
+              return new Water().paint(prevGrid, row, col, brushSize);
+            case "grass":
+              return new Grass().paint(prevGrid, row, col, brushSize);
+          }
         }
-        if (!zone) return prevGrid;
-
-        return zone.paint(prevGrid, row, col, brushSize);
+        if (selectedStructure) {
+          switch (selectedStructure) {
+            case "small-tree":
+              return new SmallTree().paint(prevGrid, row, col);
+            case "medium-tree":
+              return new MediumTree().paint(prevGrid, row, col);
+          }
+        }
+        if (selectedSprite)
+          return paint(prevGrid, row, col, brushSize, selectedSprite);
       });
     }
   };
@@ -749,6 +554,8 @@ export function MapBuilder() {
             onClick={(ev: SyntheticEvent) => {
               const target = ev.currentTarget as HTMLButtonElement;
               setCurrentTool("brush");
+              setSelectedSprite(null);
+              setSelectedStructure(null);
               setSelectedZone(target.dataset.zoneName as string);
             }}
             className={cn({
@@ -767,6 +574,8 @@ export function MapBuilder() {
             onClick={(ev: SyntheticEvent) => {
               const target = ev.currentTarget as HTMLButtonElement;
               setCurrentTool("brush");
+              setSelectedSprite(null);
+              setSelectedStructure(null);
               setSelectedZone(target.dataset.zoneName as string);
             }}
             className={cn({
@@ -786,6 +595,8 @@ export function MapBuilder() {
             onClick={(ev: SyntheticEvent) => {
               const target = ev.currentTarget as HTMLButtonElement;
               setCurrentTool("brush");
+              setSelectedSprite(null);
+              setSelectedStructure(null);
               setSelectedZone(target.dataset.zoneName as string);
             }}
             className={cn({
@@ -799,28 +610,47 @@ export function MapBuilder() {
               style={{ minWidth: CELL_SIZE, height: CELL_SIZE }}
             />
           </MenuListItem>
-          {/* {[...SPRITES].splice(0, 10).map((sprite, i) => (
-            <MenuListItem
-              key={i}
-              as="button"
-              data-name={sprite.split("/").pop()}
-              onClick={(ev: SyntheticEvent) => {
-                const target = ev.currentTarget as HTMLButtonElement;
-                setCurrentTool("brush");
-                setSelectedSprite(target.dataset.name as string);
-              }}
-              className={cn({
-                "bg-teal-600":
-                  selectedSprite === sprite && currentTool === "brush",
-              })}
-            >
-              <img
-                src={sprite}
-                alt={`sprite-${i}`}
-                style={{ minWidth: CELL_SIZE, height: CELL_SIZE }}
-              />
-            </MenuListItem>
-          ))} */}
+          <MenuListItem
+            as="button"
+            data-structure-name="small-tree"
+            onClick={(ev: SyntheticEvent) => {
+              const target = ev.currentTarget as HTMLButtonElement;
+              setCurrentTool("brush");
+              setSelectedSprite(null);
+              setSelectedZone(null);
+              setSelectedStructure(target.dataset.structureName as string);
+            }}
+            className={cn({
+              "bg-teal-600":
+                selectedStructure === "small-tree" && currentTool === "brush",
+            })}
+          >
+            <img
+              src={"/src/assets/sprites/small-tree-1.png"}
+              style={{ minWidth: CELL_SIZE, height: CELL_SIZE }}
+            />
+          </MenuListItem>
+          <MenuListItem
+            as="button"
+            data-structure-name="medium-tree"
+            onClick={(ev: SyntheticEvent) => {
+              const target = ev.currentTarget as HTMLButtonElement;
+              setCurrentTool("brush");
+              setSelectedSprite(null);
+              setSelectedZone(null);
+              setSelectedStructure(target.dataset.structureName as string);
+            }}
+            className={cn({
+              "bg-teal-600":
+                selectedStructure === "medium-tree" && currentTool === "brush",
+            })}
+          >
+            <img
+              src={"/src/assets/sprites/medium-tree-left-1.png"}
+              style={{ minWidth: CELL_SIZE, height: CELL_SIZE }}
+            />
+          </MenuListItem>
+
           <Handle size={38} />
           <DialogRoot>
             <DialogTrigger asChild>
