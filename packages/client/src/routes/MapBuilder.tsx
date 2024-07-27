@@ -8,8 +8,7 @@ import {
   Handle,
 } from "react95";
 import cn from "classnames";
-import { DialogContent, DialogRoot } from "../components/Dialog";
-import { DialogTrigger } from "@radix-ui/react-dialog";
+import { DialogContent, DialogRoot, DialogTrigger } from "../components/Dialog";
 
 const CELL_SIZE = 18;
 const SPRITES = Object.values(
@@ -670,7 +669,7 @@ export function MapBuilder() {
 
           <Handle size={38} />
           <DialogRoot>
-            <DialogTrigger asChild>
+            <DialogTrigger>
               <MenuListItem as="button">All sprites</MenuListItem>
             </DialogTrigger>
             <DialogContent title="Settings">
@@ -719,7 +718,7 @@ export function MapBuilder() {
           </MenuListItem>
           <Handle size={38} />
           <DialogRoot>
-            <DialogTrigger asChild>
+            <DialogTrigger>
               <MenuListItem as="button">Settings</MenuListItem>
             </DialogTrigger>
             <DialogContent title="Settings">
