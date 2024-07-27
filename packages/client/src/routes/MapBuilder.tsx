@@ -11,18 +11,19 @@ import cn from "classnames";
 import { DialogContent, DialogRoot, DialogTrigger } from "../components/Dialog";
 
 const CELL_SIZE = 18;
-const STRUCTURES_SPRITES = Object.values(
-  import.meta.glob("../../public/sprites/structures/*.{png,jpg,jpeg,svg}", {
-    eager: true,
-    as: "url",
-  })
-);
-const ZONES_SPRITES = Object.values(
-  import.meta.glob("../../public/sprites/zones/*.{png,jpg,jpeg,svg}", {
-    eager: true,
-    as: "url",
-  })
-);
+
+// const STRUCTURES_SPRITES = Object.values(
+//   import.meta.glob("../../public/sprites/structures/*.{png,jpg,jpeg,svg}", {
+//     eager: true,
+//     as: "url",
+//   })
+// );
+// const ZONES_SPRITES = Object.values(
+//   import.meta.glob("../../public/sprites/zones/*.{png,jpg,jpeg,svg}", {
+//     eager: true,
+//     as: "url",
+//   })
+// );
 const SPRITES_REST = Object.values(
   import.meta.glob("../../public/sprites/sprites/*.{png,jpg,jpeg,svg}", {
     eager: true,
