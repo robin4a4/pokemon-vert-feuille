@@ -424,14 +424,19 @@ function paint(
   return newGrid;
 }
 
+type ObjType = "sprite" | "zone" | "structure";
+type Obj = {
+  type: ObjType;
+  name: string;
+};
+
 export function MapBuilder() {
   const [currentTool, setCurrentTool] = useState<"brush" | "eraser">("brush");
   const [brushSize, setBrushSize] = useState(1);
-  const [selectedSprite, setSelectedSprite] = useState<string | null>(null);
-  const [selectedZone, setSelectedZone] = useState<string | null>(null);
-  const [selectedStructure, setSelectedStructure] = useState<string | null>(
-    null
-  );
+  const [selectedObj, setSelectedObj] = useState<Obj>({
+    type: "sprite",
+    name: "sand-center.png",
+  });
 
   const [grid, setGrid] = useState<Array<Array<{ sprite: string | null }>>>(
     Array.from({ length: 40 }, () =>
@@ -452,25 +457,30 @@ export function MapBuilder() {
       setGrid((prevGrid) => erase(prevGrid, row, col, brushSize));
     } else {
       setGrid((prevGrid) => {
-        if (selectedZone) {
-          switch (selectedZone) {
-            case "sand":
-              return new Sand().paint(prevGrid, row, col, brushSize);
-            case "water":
-              return new Water().paint(prevGrid, row, col, brushSize);
-            case "grass":
-              return new Grass().paint(prevGrid, row, col, brushSize);
-          }
+        switch (selectedObj.type) {
+          case "zone":
+            switch (selectedObj.name) {
+              case "sand":
+                return new Sand().paint(prevGrid, row, col, brushSize);
+              case "water":
+                return new Water().paint(prevGrid, row, col, brushSize);
+              case "grass":
+                return new Grass().paint(prevGrid, row, col, brushSize);
+              default:
+                return paint(prevGrid, row, col, brushSize, selectedObj.name);
+            }
+          case "structure":
+            switch (selectedObj.name) {
+              case "small-tree":
+                return new SmallTree().paint(prevGrid, row, col);
+              case "medium-tree":
+                return new MediumTree().paint(prevGrid, row, col);
+              default:
+                return paint(prevGrid, row, col, brushSize, selectedObj.name);
+            }
+          default:
+            return paint(prevGrid, row, col, brushSize, selectedObj.name);
         }
-        if (selectedStructure) {
-          switch (selectedStructure) {
-            case "small-tree":
-              return new SmallTree().paint(prevGrid, row, col);
-            case "medium-tree":
-              return new MediumTree().paint(prevGrid, row, col);
-          }
-        }
-        return paint(prevGrid, row, col, brushSize, selectedSprite);
       });
     }
   };
@@ -493,6 +503,8 @@ export function MapBuilder() {
 
     paintOnCell(target);
   };
+
+  console.log();
 
   return (
     <div
@@ -553,12 +565,14 @@ export function MapBuilder() {
             onClick={(ev: SyntheticEvent) => {
               const target = ev.currentTarget as HTMLButtonElement;
               setCurrentTool("brush");
-              setSelectedSprite(null);
-              setSelectedStructure(null);
-              setSelectedZone(target.dataset.zoneName as string);
+              setSelectedObj({
+                type: "zone",
+                name: target.dataset.zoneName as string,
+              });
             }}
             className={cn({
-              "bg-teal-600": selectedZone === "sand" && currentTool === "brush",
+              "bg-teal-600":
+                selectedObj.name === "sand" && currentTool === "brush",
             })}
           >
             <img
@@ -573,13 +587,14 @@ export function MapBuilder() {
             onClick={(ev: SyntheticEvent) => {
               const target = ev.currentTarget as HTMLButtonElement;
               setCurrentTool("brush");
-              setSelectedSprite(null);
-              setSelectedStructure(null);
-              setSelectedZone(target.dataset.zoneName as string);
+              setSelectedObj({
+                type: "zone",
+                name: target.dataset.zoneName as string,
+              });
             }}
             className={cn({
               "bg-teal-600":
-                selectedZone === "water" && currentTool === "brush",
+                selectedObj.name === "water" && currentTool === "brush",
             })}
           >
             <img
@@ -594,13 +609,14 @@ export function MapBuilder() {
             onClick={(ev: SyntheticEvent) => {
               const target = ev.currentTarget as HTMLButtonElement;
               setCurrentTool("brush");
-              setSelectedSprite(null);
-              setSelectedStructure(null);
-              setSelectedZone(target.dataset.zoneName as string);
+              setSelectedObj({
+                type: "zone",
+                name: target.dataset.zoneName as string,
+              });
             }}
             className={cn({
               "bg-teal-600":
-                selectedZone === "grass" && currentTool === "brush",
+                selectedObj.name === "grass" && currentTool === "brush",
             })}
           >
             <img
@@ -615,13 +631,14 @@ export function MapBuilder() {
             onClick={(ev: SyntheticEvent) => {
               const target = ev.currentTarget as HTMLButtonElement;
               setCurrentTool("brush");
-              setSelectedSprite(null);
-              setSelectedZone(null);
-              setSelectedStructure(target.dataset.structureName as string);
+              setSelectedObj({
+                type: "structure",
+                name: target.dataset.structureName as string,
+              });
             }}
             className={cn({
               "bg-teal-600":
-                selectedStructure === "small-tree" && currentTool === "brush",
+                selectedObj.name === "small-tree" && currentTool === "brush",
             })}
           >
             <img
@@ -635,13 +652,14 @@ export function MapBuilder() {
             onClick={(ev: SyntheticEvent) => {
               const target = ev.currentTarget as HTMLButtonElement;
               setCurrentTool("brush");
-              setSelectedSprite(null);
-              setSelectedZone(null);
-              setSelectedStructure(target.dataset.structureName as string);
+              setSelectedObj({
+                type: "structure",
+                name: target.dataset.structureName as string,
+              });
             }}
             className={cn({
               "bg-teal-600":
-                selectedStructure === "medium-tree" && currentTool === "brush",
+                selectedObj.name === "medium-tree" && currentTool === "brush",
             })}
           >
             <img
@@ -657,29 +675,35 @@ export function MapBuilder() {
             </DialogTrigger>
             <DialogContent title="Settings">
               <div className="grid grid-cols-8 gap-1">
-                {[...SPRITES].map((sprite, i) => (
-                  <MenuListItem
-                    key={i}
-                    as="button"
-                    data-name={sprite.split("/").pop()}
-                    onClick={(ev: SyntheticEvent) => {
-                      const target = ev.currentTarget as HTMLButtonElement;
-                      console.log("SELECTED", target.dataset.name);
-                      setCurrentTool("brush");
-                      setSelectedSprite(target.dataset.name as string);
-                    }}
-                    className={cn({
-                      "bg-teal-600":
-                        selectedSprite === sprite && currentTool === "brush",
-                    })}
-                  >
-                    <img
-                      src={sprite}
-                      alt={`sprite-${i}`}
-                      style={{ minWidth: CELL_SIZE, height: CELL_SIZE }}
-                    />
-                  </MenuListItem>
-                ))}
+                {[...SPRITES].map((sprite, i) => {
+                  const dataName = sprite.split("/").pop();
+                  return (
+                    <MenuListItem
+                      key={i}
+                      as="button"
+                      data-name={dataName}
+                      onClick={(ev: SyntheticEvent) => {
+                        const target = ev.currentTarget as HTMLButtonElement;
+                        setCurrentTool("brush");
+                        setSelectedObj({
+                          type: "sprite",
+                          name: target.dataset.name as string,
+                        });
+                      }}
+                      className={cn({
+                        "bg-teal-600":
+                          selectedObj.name === dataName &&
+                          currentTool === "brush",
+                      })}
+                    >
+                      <img
+                        src={sprite}
+                        alt={`sprite-${i}`}
+                        style={{ minWidth: CELL_SIZE, height: CELL_SIZE }}
+                      />
+                    </MenuListItem>
+                  );
+                })}
               </div>
             </DialogContent>
           </DialogRoot>
