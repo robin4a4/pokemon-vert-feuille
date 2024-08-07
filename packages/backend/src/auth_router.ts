@@ -21,6 +21,23 @@ passport.use(
 	}),
 );
 
+/**
+ * Huge weirdness here.
+ * user is a Express.User object in the serializeUser function
+ * and a User object in the deserializeUser function.
+ */
+passport.serializeUser(function(user, cb) {
+    process.nextTick(function() {
+      cb(null, user);
+    });
+  });
+
+passport.deserializeUser(function(user: User, cb) {
+process.nextTick(function() {
+    return cb(null, user);
+});
+});
+
 auth_router.post(
 	"/login",
 	passport.authenticate("local", {
