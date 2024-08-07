@@ -4,6 +4,6 @@ export default knex({
   client: "sqlite3",
   useNullAsDefault: true,
   connection: {
-    filename: "example.db",
+    filename: "sqlite.db",
   },
 });

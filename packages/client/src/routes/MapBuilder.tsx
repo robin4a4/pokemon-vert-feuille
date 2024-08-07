@@ -581,8 +581,6 @@ export function MapBuilder() {
     paintOnCell(target);
   };
 
-  console.log();
-
   return (
     <div
       className="flex flex-col justify-between gap-4 items-center"
@@ -703,27 +701,6 @@ export function MapBuilder() {
             />
           </MenuListItem>
           <Handle size={38} />
-          <MenuListItem
-            as="button"
-            data-structure-name="small-tree"
-            onClick={(ev: SyntheticEvent) => {
-              const target = ev.currentTarget as HTMLButtonElement;
-              setCurrentTool("brush");
-              setSelectedObj({
-                type: "structure",
-                name: target.dataset.structureName as string,
-              });
-            }}
-            className={cn({
-              "bg-teal-600":
-                selectedObj.name === "small-tree" && currentTool === "brush",
-            })}
-          >
-            <img
-              src={"/sprites/structures/small-tree-1.png"}
-              style={{ minWidth: CELL_SIZE, height: CELL_SIZE }}
-            />
-          </MenuListItem>
           <MenuListItem
             as="button"
             data-structure-name="medium-tree"
