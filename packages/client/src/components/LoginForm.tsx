@@ -18,8 +18,8 @@ export function LoginForm({
                     throw new Error("Passwords do not match");
                 }
             }
-            const apiPath = type === "login" ? "/api/login" : "/api/users";
-            const response = await fetch(apiPath, {
+            const apiPath = type === "login" ? "/login" : "/users";
+            const response = await fetch(import.meta.env.VITE_BASE_API_URL + apiPath, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

@@ -1,5 +1,5 @@
 import type { ZodError, z } from "zod";
-import { ApiResponseSchema } from "@shared/schema";
+import { ApiResponseSchema } from "shared/schema";
 
 export function validate_response(data: z.infer<typeof ApiResponseSchema>) {
 	try {
