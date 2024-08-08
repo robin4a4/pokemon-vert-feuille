@@ -21,7 +21,7 @@ export function LoginForm({
                 }
             }
             const apiPath = type === "login" ? "/auth/login" : "/users";
-            const response = await fetchApi(apiPath, {
+            return fetchApi(apiPath, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -31,11 +31,6 @@ export function LoginForm({
                     password: formData.get("password") as string,
                 })
             });
-            const result = ApiResponseSchema.parse(await response.json())
-            if (result.status === "error") {
-                throw new Error(result.error)
-            }
-            return result.data
 		},
         onSuccess: (data) => {
             localStorage.setItem("registration-token", data as string);
