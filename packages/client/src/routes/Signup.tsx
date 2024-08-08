@@ -1,7 +1,7 @@
 import { LoginForm } from "../components/LoginForm";
 
-export function Login() {
+export function Signup() {
 	return (
-		<LoginForm type="login" />
+		<LoginForm type="signup" />
 	);
 }

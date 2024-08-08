@@ -2,18 +2,20 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 
 import { styleReset } from "react95";
-import { createGlobalStyle, ThemeProvider } from "styled-components";
+import { ThemeProvider, createGlobalStyle } from "styled-components";
 import "./main.css";
 
 /* Pick a theme of your choice */
 import original from "react95/dist/themes/original";
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 /* Original Windows95 font (optional) */
 import ms_sans_serif from "react95/dist/fonts/ms_sans_serif.woff2";
 import ms_sans_serif_bold from "react95/dist/fonts/ms_sans_serif_bold.woff2";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { Login } from "./routes/Login";
 import { MapBuilder } from "./routes/MapBuilder";
+import { Signup } from "./routes/Signup";
 
 const GlobalStyles = createGlobalStyle`
   ${styleReset}
@@ -39,21 +41,29 @@ const GlobalStyles = createGlobalStyle`
 `;
 
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <MapBuilder />,
-  },
-  {
-    path: "login",
-    element: <Login />,
-  },
+	{
+		path: "/",
+		element: <MapBuilder />,
+	},
+	{
+		path: "login",
+		element: <Login />,
+	},
+    {
+		path: "signup",
+		element: <Signup />,
+	},
 ]);
 
+const queryClient = new QueryClient();
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <GlobalStyles />
-    <ThemeProvider theme={original}>
-      <RouterProvider router={router} />
-    </ThemeProvider>
-  </React.StrictMode>
+	<React.StrictMode>
+		<GlobalStyles />
+		<QueryClientProvider client={queryClient}>
+			<ThemeProvider theme={original}>
+				<RouterProvider router={router} />
+			</ThemeProvider>
+		</QueryClientProvider>
+	</React.StrictMode>,
 );
