@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { Anchor, Button, Frame, TextInput } from "react95";
+import { ApiResponseSchema } from "shared/schema";
 
 export function LoginForm({
     type,
@@ -29,7 +30,11 @@ export function LoginForm({
                 const errorMessage = type === "login" ? "Login failed" : "Signup failed";
                 throw new Error(errorMessage);
             }
-            return response.json();
+            const result = ApiResponseSchema.parse(await response.json())
+            if (result.status === "error") {
+                throw new Error(result.error)
+            }
+            return result.data
 		},
 	});
 
