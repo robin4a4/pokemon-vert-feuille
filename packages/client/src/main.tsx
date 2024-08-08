@@ -16,6 +16,7 @@ import ms_sans_serif_bold from "react95/dist/fonts/ms_sans_serif_bold.woff2";
 import { Login } from "./routes/Login";
 import { MapBuilder } from "./routes/MapBuilder";
 import { Signup } from "./routes/Signup";
+import { AppRoute } from "./consts";
 
 const GlobalStyles = createGlobalStyle`
   ${styleReset}
@@ -42,15 +43,15 @@ const GlobalStyles = createGlobalStyle`
 
 const router = createBrowserRouter([
 	{
-		path: "/",
+		path: AppRoute.MAP_BUILDER,
 		element: <MapBuilder />,
 	},
 	{
-		path: "login",
+		path: AppRoute.LOGIN,
 		element: <Login />,
 	},
     {
-		path: "signup",
+		path: AppRoute.SIGNUP,
 		element: <Signup />,
 	},
 ]);

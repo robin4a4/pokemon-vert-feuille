@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Anchor, Button, Frame, TextInput } from "react95";
 import { ApiResponseSchema } from "shared/schema";
 import { fetchApi } from "../utils";
+import { AppRoute } from "../consts";
 
 export function LoginForm({
     type,
@@ -38,7 +39,7 @@ export function LoginForm({
 		},
         onSuccess: (data) => {
             localStorage.setItem("registration-token", data as string);
-            navigate("/grid");
+            navigate(AppRoute.MAP_BUILDER);
         },
         onError: () => {
             localStorage.removeItem("registration-token");
