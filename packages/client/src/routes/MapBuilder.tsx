@@ -1,3 +1,4 @@
+import type { QueryClient } from "@tanstack/react-query";
 import cn from "classnames";
 import { type SyntheticEvent, useState } from "react";
 import {
@@ -9,7 +10,7 @@ import {
 	Slider,
 } from "react95";
 import { DialogContent, DialogRoot, DialogTrigger } from "../components/Dialog";
-import { QueryClient } from "@tanstack/react-query";
+import { Shell } from "../components/Shell";
 
 const CELL_SIZE = 18;
 
@@ -509,13 +510,13 @@ type Obj = {
 };
 
 export const loader = (queryClient: QueryClient) => async () => {
-    try {
-      await queryClient.ensureQueryData(linksQueries.list());
-      return true;
-    } catch (error) {
-      return redirect("/login");
-    }
-  };
+	try {
+		await queryClient.ensureQueryData(linksQueries.list());
+		return true;
+	} catch (error) {
+		return redirect("/login");
+	}
+};
 
 export function MapBuilder() {
 	const [currentTool, setCurrentTool] = useState<"brush" | "eraser">("brush");
@@ -524,7 +525,6 @@ export function MapBuilder() {
 		type: "sprite",
 		name: "sand-center.png",
 	});
-    const {}
 	const [grid, setGrid] = useState<Array<Array<{ sprite: string | null }>>>(
 		Array.from({ length: 40 }, () =>
 			Array.from({ length: 40 }, () => ({
@@ -592,6 +592,7 @@ export function MapBuilder() {
 	};
 
 	return (
+        <Shell>
 		<div
 			className="flex flex-col justify-between gap-4 items-center"
 			style={{
@@ -872,5 +873,6 @@ export function MapBuilder() {
 				</MenuList>
 			</div>
 		</div>
+        </Shell>
 	);
 }

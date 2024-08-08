@@ -27,7 +27,6 @@ passport.use(
 auth_router.post("/login", (req, res, next) => {
 	logger.info("Logging in");
 	try {
-		console.log(req.body);
 		const { username, password } = UserBodySchema.parse({
 			username: req.body.username,
 			password: req.body.password,
@@ -67,12 +66,6 @@ auth_router.post("/login", (req, res, next) => {
 		logger.error("Error logging in");
 		return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(validate_response({ status: "error", error: err.toString() }));
 	}
-});
-
-auth_router.get("/logout", (req, res) => {
-	logger.info("Logging out");
-	// req.logout();
-	res.redirect("/");
 });
 
 export { auth_router };

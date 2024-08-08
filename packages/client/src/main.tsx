@@ -3,7 +3,6 @@ import ReactDOM from "react-dom/client";
 
 import { styleReset } from "react95";
 import { ThemeProvider, createGlobalStyle } from "styled-components";
-import "./main.css";
 
 /* Pick a theme of your choice */
 import original from "react95/dist/themes/original";
@@ -17,6 +16,9 @@ import { Login } from "./routes/Login";
 import { MapBuilder } from "./routes/MapBuilder";
 import { Signup } from "./routes/Signup";
 import { AppRoute } from "./consts";
+import { Dashboard } from "./routes/Dashboard";
+import { PrivateRoute } from "./routes/utils/PrivateRoute";
+import "./main.css";
 
 const GlobalStyles = createGlobalStyle`
   ${styleReset}
@@ -42,6 +44,15 @@ const GlobalStyles = createGlobalStyle`
 `;
 
 const router = createBrowserRouter([
+    {
+        element: <PrivateRoute />,
+        children: [
+          {
+            path: '/dashboard',
+            element: <Dashboard />,
+          },
+        ],
+      },
 	{
 		path: AppRoute.MAP_BUILDER,
 		element: <MapBuilder />,

@@ -11,7 +11,7 @@ exports.up = (knex) => knex.schema
       table.timestamp("created_at").defaultTo(knex.fn.now());
         table.timestamp("updated_at").defaultTo(knex.fn.now())
     })
-    .createTable("boards", (table) => {
+    .createTable("grids", (table) => {
       table.increments("id").primary();
       table.string("name", 1000).notNullable();
       table.string("grid").notNullable();
@@ -22,4 +22,4 @@ exports.up = (knex) => knex.schema
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.down = (knex) => knex.schema.dropTableIfExists("boards").dropTableIfExists("users")
+exports.down = (knex) => knex.schema.dropTableIfExists("grids").dropTableIfExists("users")

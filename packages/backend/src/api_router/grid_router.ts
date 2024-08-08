@@ -4,6 +4,9 @@ import type { PartialModelObject } from "objection";
 import { z } from "zod";
 import { Grid } from "../models";
 import { validate_response } from "./validator";
+import { Logger } from "../utils";
+
+const logger = new Logger("grid_router");
 
 const grid_router = Router();
 
@@ -19,10 +22,11 @@ grid_router
 			const grids = await Grid.query();
 			res.json(validate_response({ status: "success", data: grids }));
 		} catch (e) {
+            logger.error(`Error getting grids: ${e}`);
 			res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(
 				validate_response({
 					status: "error",
-					error: (e as any).errors.toString(),
+					error: JSON.stringify((e as any).errors),
 				}),
 			);
 		}

@@ -53,7 +53,7 @@ export class Grid extends Base {
 		const base = Base.jsonSchema;
 		return {
 			...base,
-			required: [...base.required, "name", "grid", "userId"],
+			required: ["name", "grid", "userId"],
 			properties: {
 				...base.properties,
 				name: { type: "string", minLength: 1, maxLength: 255 },
