@@ -9,6 +9,7 @@ import {
 	Slider,
 } from "react95";
 import { DialogContent, DialogRoot, DialogTrigger } from "../components/Dialog";
+import { QueryClient } from "@tanstack/react-query";
 
 const CELL_SIZE = 18;
 
@@ -507,6 +508,15 @@ type Obj = {
 	name: string;
 };
 
+export const loader = (queryClient: QueryClient) => async () => {
+    try {
+      await queryClient.ensureQueryData(linksQueries.list());
+      return true;
+    } catch (error) {
+      return redirect("/login");
+    }
+  };
+
 export function MapBuilder() {
 	const [currentTool, setCurrentTool] = useState<"brush" | "eraser">("brush");
 	const [brushSize, setBrushSize] = useState(1);
@@ -514,7 +524,7 @@ export function MapBuilder() {
 		type: "sprite",
 		name: "sand-center.png",
 	});
-
+    const {}
 	const [grid, setGrid] = useState<Array<Array<{ sprite: string | null }>>>(
 		Array.from({ length: 40 }, () =>
 			Array.from({ length: 40 }, () => ({
