@@ -1,7 +1,7 @@
 import { Router } from "express";
+import { auth_router } from "./auth_router";
 import { grid_router } from "./grid_router";
 import { user_router } from "./user_router";
-import { auth_router } from "./auth_router";
 
 const api_router = Router();
 

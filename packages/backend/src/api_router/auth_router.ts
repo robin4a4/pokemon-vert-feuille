@@ -1,11 +1,11 @@
+import crypto from "node:crypto";
 import { Router } from "express";
 import { StatusCodes } from "http-status-codes";
-import crypto from "node:crypto";
 import passport from "passport";
 import { Strategy as JwtStrategy } from "passport-jwt";
 import { User } from "../models";
 import { UserBodySchema } from "../schema";
-import { generateToken, Logger, strategy_options } from "../utils";
+import { Logger, generateToken, strategy_options } from "../utils";
 import { validate_response } from "./validator";
 
 const auth_router = Router();
@@ -24,54 +24,53 @@ passport.use(
 	}),
 );
 
-auth_router.post(
-	"/login",
-    (req, res, next) => {
-        logger.info("Logging in");
-        try {
-            console.log(req.body);
-            const { username, password } = UserBodySchema.parse({
-                username: req.body.username,
-                password: req.body.password,
-            });
-            User.query().findOne({ username })
-            .then((user) => {
-                if (!user) {
-                    logger.warn("User not found");
-                    return res.status(StatusCodes.NOT_FOUND).json(validate_response({ status: 'error', error: 'User not found, did you forgot to register ?' }));
-                }
+auth_router.post("/login", (req, res, next) => {
+	logger.info("Logging in");
+	try {
+		console.log(req.body);
+		const { username, password } = UserBodySchema.parse({
+			username: req.body.username,
+			password: req.body.password,
+		});
+		User.query()
+			.findOne({ username })
+			.then((user) => {
+				if (!user) {
+					logger.warn("User not found");
+					return res
+						.status(StatusCodes.NOT_FOUND)
+						.json(validate_response({ status: "error", error: "User not found, did you forgot to register ?" }));
+				}
 
-                // Retrieve the stored salt and hashed password from the user record
-                const { salt, password: stored_hashed_password } = user;
+				// Retrieve the stored salt and hashed password from the user record
+				const { salt, password: stored_hashed_password } = user;
 
-                // Hash the provided password with the same salt
-                crypto.pbkdf2(password, salt, 310000, 32, 'sha256', (err, hashed_password) => {
-                    if (err) {
-                        logger.error("Error hashing password");
-                        return next(err);
-                    }
+				// Hash the provided password with the same salt
+				crypto.pbkdf2(password, salt, 310000, 32, "sha256", (err, hashed_password) => {
+					if (err) {
+						logger.error("Error hashing password");
+						return next(err);
+					}
 
-                    // Compare the hashed passwords
-                    if (crypto.timingSafeEqual(hashed_password, Buffer.from(stored_hashed_password, "hex"))) {
-                        logger.info("Passwords match");
-                        const token = generateToken(user);
-                        res.json({ status: 'success', data: token });
-                    } else {
-                        logger.error("Passwords do not match");
-                        res.status(StatusCodes.UNAUTHORIZED).json(validate_response({ status: 'error', error: 'Invalid username or password' }));
-                    }
-                });
-            })
-        }
-        catch (err) {
-            logger.error("Error logging in");
-         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(validate_response({ status: 'error', error: err.toString() }));
-        }
-    },
-);
+					// Compare the hashed passwords
+					if (crypto.timingSafeEqual(hashed_password, Buffer.from(stored_hashed_password, "hex"))) {
+						logger.info("Passwords match");
+						const token = generateToken(user);
+						res.json({ status: "success", data: token });
+					} else {
+						logger.error("Passwords do not match");
+						res.status(StatusCodes.UNAUTHORIZED).json(validate_response({ status: "error", error: "Invalid username or password" }));
+					}
+				});
+			});
+	} catch (err) {
+		logger.error("Error logging in");
+		return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(validate_response({ status: "error", error: err.toString() }));
+	}
+});
 
 auth_router.get("/logout", (req, res) => {
-    logger.info("Logging out");
+	logger.info("Logging out");
 	// req.logout();
 	res.redirect("/");
 });
