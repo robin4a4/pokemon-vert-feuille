@@ -5,8 +5,11 @@ import type { PartialModelObject } from "objection";
 import { z } from "zod";
 import { User } from "../models";
 import { validate_response } from "./validator";
+import { Logger } from "../utils";
 
 const user_router = Router();
+
+const logger = new Logger("user_router");
 
 const UserParamsSchema = z
 	.object({
@@ -26,8 +29,10 @@ user_router
 	.get(async (req: Request, res: Response) => {
 		try {
 			const users = await User.query();
+            logger.info("Users found");
 			res.json(validate_response({ status: "success", data: users }));
 		} catch (e) {
+            logger.error("Error getting users");
 			res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(
 				validate_response({
 					status: "error",
@@ -50,9 +55,11 @@ user_router
 					salt: salt,
 				} as unknown as PartialModelObject<User>)
 				.then((user) => {
+                    logger.info("User created");
 					res.json(validate_response({ status: "success", data: user }));
 				})
 				.catch((err) => {
+                    logger.error("Error creating user");
 					res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(validate_response({ status: "error", error: err.toString() }));
 				});
 		});
@@ -65,11 +72,14 @@ user_router
 			const user_id = UserParamsSchema.parse(req.params).id;
 			const user = await User.query().findById(user_id);
 			if (!user) {
+                logger.error("User not found");
 				res.status(StatusCodes.NOT_FOUND).json(validate_response({ status: "error", error: "User not found" }));
 				return;
 			}
+            logger.info("User found");
 			res.json(validate_response({ status: "success", data: user }));
 		} catch (e) {
+            logger.error("Error getting user");
 			res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(
 				validate_response({
 					status: "error",
@@ -95,13 +105,16 @@ user_router
 						salt: salt,
 					} as unknown as PartialModelObject<User>)
 					.then((user) => {
+                        logger.info("User updated");
 						res.json(validate_response({ status: "success", data: user }));
 					})
 					.catch((err) => {
+                        logger.error("Error updating user in db");
 						res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(validate_response({ status: "error", error: err.toString() }));
 					});
 			});
 		} catch (e) {
+            logger.error("Error updating user");
 			res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(
 				validate_response({
 					status: "error",
