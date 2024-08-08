@@ -30,24 +30,26 @@ grid_router
 	})
 	.post((req: Request, res: Response, next: NextFunction) => {
 		const { username, grid } = GridBodySchema.parse(req.body);
-        Grid.query()
-            .insert({
-                username,
-                grid,
-            } as unknown as PartialModelObject<Grid>)
-            .then((grid) => {
-                res.json(validate_response({ status: "success", data: grid }));
-            })
-            .catch((err) => {
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(validate_response({ status: "error", error: err.toString() }));
-            });
+		Grid.query()
+			.insert({
+				username,
+				grid,
+			} as unknown as PartialModelObject<Grid>)
+			.then((grid) => {
+				res.json(validate_response({ status: "success", data: grid }));
+			})
+			.catch((err) => {
+				res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(validate_response({ status: "error", error: err.toString() }));
+			});
 	});
 
-const GridParamsSchema = z.object({
-    id: z.string(),
-}).transform((params) => {
-    return { id: Number.parseInt(params.id) };
-});
+const GridParamsSchema = z
+	.object({
+		id: z.string(),
+	})
+	.transform((params) => {
+		return { id: Number.parseInt(params.id) };
+	});
 
 grid_router
 	.route("/:id")
@@ -70,19 +72,20 @@ grid_router
 		}
 	})
 	.put(async (req: Request, res: Response, next: NextFunction) => {
-        const grid_id = GridParamsSchema.parse(req.params).id;
+		const grid_id = GridParamsSchema.parse(req.params).id;
 		const { username, grid } = GridBodySchema.parse(req.body);
-        Grid.query().findById(grid_id)
-            .patch({
-                username,
-                grid,
-            } as unknown as PartialModelObject<Grid>)
-            .then((grid) => {
-                res.json(validate_response({ status: "success", data: grid }));
-            })
-            .catch((err) => {
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(validate_response({ status: "error", error: err.toString() }));
-            });
+		Grid.query()
+			.findById(grid_id)
+			.patch({
+				username,
+				grid,
+			} as unknown as PartialModelObject<Grid>)
+			.then((grid) => {
+				res.json(validate_response({ status: "success", data: grid }));
+			})
+			.catch((err) => {
+				res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(validate_response({ status: "error", error: err.toString() }));
+			});
 	});
 
 export { grid_router };

@@ -1,6 +1,5 @@
 import { type ZodError, z } from "zod";
 
-
 export const ApiResponseSchema = z.object({
 	status: z.literal("success").or(z.literal("error")),
 	data: z.any().optional(),

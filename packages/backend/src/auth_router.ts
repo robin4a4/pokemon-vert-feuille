@@ -26,16 +26,14 @@ passport.use(
  * user is a Express.User object in the serializeUser function
  * and a User object in the deserializeUser function.
  */
-passport.serializeUser(function(user, cb) {
-    process.nextTick(function() {
-      cb(null, user);
-    });
-  });
-
-passport.deserializeUser(function(user: User, cb) {
-process.nextTick(function() {
-    return cb(null, user);
+passport.serializeUser((user, cb) => {
+	process.nextTick(() => {
+		cb(null, user);
+	});
 });
+
+passport.deserializeUser((user: User, cb) => {
+	process.nextTick(() => cb(null, user));
 });
 
 auth_router.post(

@@ -1,8 +1,8 @@
-import crypto from "crypto";
+import crypto from "node:crypto";
 import { type NextFunction, type Request, type Response, Router } from "express";
 import { StatusCodes } from "http-status-codes";
 import type { PartialModelObject } from "objection";
-import { type ZodError, z } from "zod";
+import { z } from "zod";
 import { User } from "../models";
 import { validate_response } from "./validator";
 
@@ -38,7 +38,7 @@ user_router
 	})
 	.post((req: Request, res: Response, next: NextFunction) => {
 		const { username, password } = UserBodySchema.parse(req.body);
-		var salt = crypto.randomBytes(16);
+		const salt = crypto.randomBytes(16);
 		crypto.pbkdf2(password, salt, 310000, 32, "sha256", (err, hashedPassword) => {
 			if (err) {
 				return next(err);
@@ -82,7 +82,7 @@ user_router
 		try {
 			const user_id = UserParamsSchema.parse(req.params).id;
 			const { username, password } = UserBodySchema.parse(req.body);
-			var salt = crypto.randomBytes(16);
+			const salt = crypto.randomBytes(16);
 			crypto.pbkdf2(password, salt, 310000, 32, "sha256", (err, hashedPassword) => {
 				if (err) {
 					return next(err);
