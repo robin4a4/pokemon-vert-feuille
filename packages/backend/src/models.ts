@@ -14,19 +14,11 @@ class Base extends Model {
 		},
 	} satisfies JSONSchema;
 
-    // // Set timestamps before inserting a new record
-    // override async $beforeInsert(queryContext: QueryContext) {
-    //     super.$beforeInsert(queryContext);
-    //     const now = new Date();
-    //     this.created_at = now;
-    //     this.updated_at = now;
-    // }
-
-    // // Update the timestamp before updating a record
-    // override async $beforeUpdate(opt: ModelOptions, queryContext: QueryContext) {
-    //     super.$beforeUpdate(opt, queryContext);
-    //     this.updated_at = new Date();
-    // }
+    // Update the timestamp before updating a record
+    override async $beforeUpdate(opt: ModelOptions, queryContext: QueryContext) {
+        super.$beforeUpdate(opt, queryContext);
+        this.updated_at = new Date();
+    }
 }
 
 export class User extends Base {
