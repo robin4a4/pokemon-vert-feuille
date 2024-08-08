@@ -1,12 +1,11 @@
-import crypto from "node:crypto";
 import { type NextFunction, type Request, type Response, Router } from "express";
 import { StatusCodes } from "http-status-codes";
+import crypto from "node:crypto";
 import type { PartialModelObject } from "objection";
-import { z } from "zod";
 import { User } from "../models";
-import { validate_response } from "./validator";
-import { Logger } from "../utils";
 import { UserBodySchema, UserParamsSchema } from "../schema";
+import { generateToken, Logger } from "../utils";
+import { validate_response } from "./validator";
 
 const user_router = Router();
 
@@ -39,12 +38,14 @@ user_router
 			User.query()
 				.insert({
 					username,
-					password: hashedPassword,
-					salt: salt,
+					password: hashedPassword.toString("hex"),
+					salt: salt.toString("hex"),
 				} as unknown as PartialModelObject<User>)
 				.then((user) => {
                     logger.info("User created");
-					res.json(validate_response({ status: "success", data: user }));
+                    // Generate a JWT token for the newly registered user
+                    const token = generateToken(user);
+					res.json(validate_response({ status: "success", data: {user, token}}));
 				})
 				.catch((err) => {
                     logger.error("Error creating user");

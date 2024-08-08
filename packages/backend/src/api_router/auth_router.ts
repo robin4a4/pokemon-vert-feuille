@@ -1,30 +1,15 @@
-import { Router, type NextFunction } from "express";
-import passport from "passport";
-import { Strategy as JwtStrategy, ExtractJwt, type StrategyOptionsWithRequest} from "passport-jwt";
-import { User } from "../models";
-import { Logger } from "../utils";
-import { validate_response } from "./validator";
-import jwt from "jsonwebtoken";
-import { UserBodySchema } from "../schema";
-import crypto from "node:crypto";
+import { Router } from "express";
 import { StatusCodes } from "http-status-codes";
+import crypto from "node:crypto";
+import passport from "passport";
+import { Strategy as JwtStrategy } from "passport-jwt";
+import { User } from "../models";
+import { UserBodySchema } from "../schema";
+import { generateToken, Logger, strategy_options } from "../utils";
+import { validate_response } from "./validator";
 
 const auth_router = Router();
 const logger = new Logger("auth_router");
-
-const strategy_options = {
-    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: "secret", // replace with process.env.JWT_SECRET
-    passReqToCallback: true,
-} satisfies StrategyOptionsWithRequest
-
-export function generateToken(user: User) {
-    return jwt.sign({ id: user.id }, strategy_options.secretOrKey, { expiresIn: '1h' });
-}
-
-export function authenticateJwt(req: Request, res: Response, next: NextFunction) {
-    passport.authenticate('jwt', { session: false })(req, res, next);
-}
 
 passport.use(
 	new JwtStrategy(strategy_options, (jwt_payload, done) => {

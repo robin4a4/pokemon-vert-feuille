@@ -36,6 +36,13 @@ export function LoginForm({
             }
             return result.data
 		},
+        onSuccess: (data) => {
+            localStorage.setItem("registration-token", data as string);
+            navigate("/grid");
+        },
+        onError: () => {
+            localStorage.removeItem("registration-token");
+        }
 	});
 
 	return (

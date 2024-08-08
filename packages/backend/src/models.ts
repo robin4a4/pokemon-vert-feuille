@@ -1,4 +1,4 @@
-import { type JSONSchema, Model } from "objection";
+import { type JSONSchema, Model, type ModelOptions, type QueryContext, type StaticHookArguments } from "objection";
 
 class Base extends Model {
 	id!: number;
@@ -7,13 +7,26 @@ class Base extends Model {
 
 	static override jsonSchema = {
 		type: "object",
-		required: ["created_at", "updated_at"],
 		properties: {
 			id: { type: "integer" },
 			created_at: { type: "string", format: "date-time" },
 			updated_at: { type: "string", format: "date-time" },
 		},
 	} satisfies JSONSchema;
+
+    // // Set timestamps before inserting a new record
+    // override async $beforeInsert(queryContext: QueryContext) {
+    //     super.$beforeInsert(queryContext);
+    //     const now = new Date();
+    //     this.created_at = now;
+    //     this.updated_at = now;
+    // }
+
+    // // Update the timestamp before updating a record
+    // override async $beforeUpdate(opt: ModelOptions, queryContext: QueryContext) {
+    //     super.$beforeUpdate(opt, queryContext);
+    //     this.updated_at = new Date();
+    // }
 }
 
 export class User extends Base {
@@ -23,10 +36,10 @@ export class User extends Base {
 
 	static override tableName = "users";
 	static override get jsonSchema() {
-		const base = super.jsonSchema;
+		const base = Base.jsonSchema;
 		return {
 			...base,
-			required: [...base.required, "username", "password", "salt"],
+			required: ["username", "password", "salt"],
 			properties: {
 				...base.properties,
 				username: { type: "string", minLength: 1, maxLength: 255 },
@@ -45,7 +58,7 @@ export class Grid extends Base {
 	static override tableName = "grids";
 
 	static override get jsonSchema() {
-		const base = super.jsonSchema;
+		const base = Base.jsonSchema;
 		return {
 			...base,
 			required: [...base.required, "name", "grid", "userId"],
