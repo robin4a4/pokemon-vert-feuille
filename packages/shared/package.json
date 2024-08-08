@@ -1,11 +1,17 @@
 {
   "name": "shared",
   "version": "1.0.0",
-  "main": "index.js",
+  "type": "module",
+  "exports": {
+    "./schema": "./src/schema.ts"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "zod": "^3.23.8"
+  }
 }

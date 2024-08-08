@@ -10,7 +10,8 @@
   "license": "ISC",
   "workspaces": [
     "packages/backend",
-    "packages/client"
+    "packages/client",
+    "packages/shared"
   ],
   "dependencies": {
     "express": "^4.19.2"

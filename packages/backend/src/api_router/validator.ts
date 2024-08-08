@@ -1,10 +1,5 @@
-import { type ZodError, z } from "zod";
-
-export const ApiResponseSchema = z.object({
-	status: z.literal("success").or(z.literal("error")),
-	data: z.any().optional(),
-	error: z.string().optional(),
-});
+import type { ZodError, z } from "zod";
+import { ApiResponseSchema } from "@shared/schema";
 
 export function validate_response(data: z.infer<typeof ApiResponseSchema>) {
 	try {

@@ -13,6 +13,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "shared": "file:../shared",
     "@types/connect-sqlite3": "^0.9.5",
     "@types/express-session": "^1.18.0",
     "connect-sqlite3": "^0.9.15",
