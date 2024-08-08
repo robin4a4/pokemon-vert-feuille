@@ -6,23 +6,11 @@ import { z } from "zod";
 import { User } from "../models";
 import { validate_response } from "./validator";
 import { Logger } from "../utils";
+import { UserBodySchema, UserParamsSchema } from "../schema";
 
 const user_router = Router();
 
 const logger = new Logger("user_router");
-
-const UserParamsSchema = z
-	.object({
-		id: z.string(),
-	})
-	.transform((params) => {
-		return { id: Number.parseInt(params.id) };
-	});
-
-const UserBodySchema = z.object({
-	username: z.string(),
-	password: z.string(),
-});
 
 user_router
 	.route("/")

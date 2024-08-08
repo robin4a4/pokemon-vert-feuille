@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { Anchor, Button, Frame, TextInput } from "react95";
 import { ApiResponseSchema } from "shared/schema";
+import { fetchApi } from "../utils";
 
 export function LoginForm({
     type,
@@ -18,18 +19,17 @@ export function LoginForm({
                     throw new Error("Passwords do not match");
                 }
             }
-            const apiPath = type === "login" ? "/login" : "/users";
-            const response = await fetch(import.meta.env.VITE_BASE_API_URL + apiPath, {
+            const apiPath = type === "login" ? "/auth/login" : "/users";
+            const response = await fetchApi(apiPath, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: formData,
+                body: JSON.stringify({
+                    username: formData.get("username") as string,
+                    password: formData.get("password") as string,
+                })
             });
-            if (!response.ok) {
-                const errorMessage = type === "login" ? "Login failed" : "Signup failed";
-                throw new Error(errorMessage);
-            }
             const result = ApiResponseSchema.parse(await response.json())
             if (result.status === "error") {
                 throw new Error(result.error)

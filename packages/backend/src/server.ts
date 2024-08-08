@@ -1,11 +1,9 @@
-import ConnectSQLite3 from "connect-sqlite3";
-import express from "express";
-import session from "express-session";
+import express, { type NextFunction } from "express";
 import { Model } from "objection";
-import passport from "passport";
+import cors from "cors";
 import knexfile from "../knexfile";
 import { api_router } from "./api_router";
-import { auth_router } from "./auth_router";
+import { Logger } from "./utils";
 
 Model.knex(knexfile);
 
@@ -13,19 +11,26 @@ const app = express();
 const port = 3000;
 const BASE_PATH = "/api";
 
-const SQLiteStore = ConnectSQLite3(session);
-app.use(
-	session({
-		secret: "keyboard cat",
-		resave: false,
-		saveUninitialized: false,
-		store: new SQLiteStore({ db: "sessions.db", dir: "../" }),
-	}),
-);
-app.use(passport.authenticate("session"));
+const loggerMiddleware = (req: Request, res: Response, next: NextFunction) => {
+    console.log(`${req.method} ${req.url}`);
+    next();
+}
 
+// Middleware to parse application/json
+app.use(express.json());
+
+app.use(loggerMiddleware);
+app.use(cors(
+    {
+        origin: ["http://localhost:3000", "http://localhost:5173"],
+        methods: ["GET", "POST", "PUT", "DELETE"],
+        allowedHeaders: ["Content-Type", "Authorization"],
+        credentials: true,
+    }
+));
+
+app.options('*', cors());
 app.use(BASE_PATH, api_router);
-app.use(BASE_PATH, auth_router);
 
 app.listen(port, () => {
 	console.log(`Server for map builder listening on port ${port}`);

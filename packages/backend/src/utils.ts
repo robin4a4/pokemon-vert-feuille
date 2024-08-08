@@ -4,12 +4,12 @@ export class Logger {
         this.logger_name = logger_name;
     }
     info(message: string) {
-        console.log(`INFO ${this.logger_name}: ${message}`);
+        console.log(`[INFO] ${this.logger_name}: ${message}`);
     }
     error(message: string) {
-        console.error(`Error ${this.logger_name}: ${message}`);
+        console.error(`[ERROR] ${this.logger_name}: ${message}`);
     }
     warn(message: string) {
-        console.warn(`Warning ${this.logger_name}: ${message}`);
+        console.warn(`[WARN] ${this.logger_name}: ${message}`);
     }
 }
