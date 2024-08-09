@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { fetchApi } from "./utils";
-import { AppRoute } from "./consts";
+import { AppRoute, AUTH_TOKEN_KEY } from "./consts";
 import { useNavigate } from "react-router-dom";
 
 export function useLoginMutation(type: "signup" | "login") {
@@ -27,11 +27,11 @@ export function useLoginMutation(type: "signup" | "login") {
             });
         },
         onSuccess: (data) => {
-            localStorage.setItem("registration-token", data as string);
+            localStorage.setItem(AUTH_TOKEN_KEY, data as string);
             navigate(AppRoute.DASHBOARD);
         },
         onError: () => {
-            localStorage.removeItem("registration-token");
+            localStorage.removeItem(AUTH_TOKEN_KEY);
         },
     })
 } ;
@@ -41,7 +41,7 @@ export function useLogoutMutation() {
         mutate: () => {
 
             const navigate = useNavigate();
-            localStorage.removeItem("registration-token");
+            localStorage.removeItem(AUTH_TOKEN_KEY);
             navigate(AppRoute.LOGIN);
     }
 }

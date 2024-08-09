@@ -45,13 +45,8 @@ const GlobalStyles = createGlobalStyle`
 
 const router = createBrowserRouter([
     {
-        element: <PrivateRoute />,
-        children: [
-          {
-            path: '/dashboard',
-            element: <Dashboard />,
-          },
-        ],
+        path: AppRoute.DASHBOARD,
+        element: <PrivateRoute element={<Dashboard />}/>,
       },
 	{
 		path: AppRoute.MAP_BUILDER,
