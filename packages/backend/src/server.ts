@@ -2,7 +2,7 @@ import cors from "cors";
 import express, { type NextFunction } from "express";
 import { Model } from "objection";
 import knexfile from "../knexfile";
-import { api_router } from "./api_router";
+import { apiRouter } from "./api_router";
 import { Logger } from "./utils";
 
 Model.knex(knexfile);
@@ -30,7 +30,7 @@ app.use(
 );
 
 app.options("*", cors());
-app.use(BASE_PATH, api_router);
+app.use(BASE_PATH, apiRouter);
 
 app.listen(port, () => {
 	console.log(`Server for map builder listening on port ${port}`);

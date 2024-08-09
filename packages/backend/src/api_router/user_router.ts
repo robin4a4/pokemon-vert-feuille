@@ -4,24 +4,24 @@ import { StatusCodes } from "http-status-codes";
 import type { PartialModelObject } from "objection";
 import { User } from "../models";
 import { UserBodySchema, UserParamsSchema } from "../schema";
-import { Logger, generate_token, is_unique_constraint_violation } from "../utils";
-import { validate_response } from "./validator";
+import { Logger, generateToken, isUniqueConstraintViolation } from "../utils";
+import { validateResponse } from "./validator";
 
-const user_router = Router();
+const userRouter = Router();
 
-const logger = new Logger("user_router");
+const logger = new Logger("userRouter");
 
-user_router
+userRouter
 	.route("/")
 	.get(async (req: Request, res: Response) => {
 		try {
 			const users = await User.query();
 			logger.info("Users found");
-			res.json(validate_response({ status: "success", data: users }));
+			res.json(validateResponse({ status: "success", data: users }));
 		} catch (e) {
 			logger.error("Error getting users");
 			res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(
-				validate_response({
+				validateResponse({
 					status: "error",
 					error: (e as any).errors.toString(),
 				}),
@@ -44,39 +44,39 @@ user_router
 				.then((user) => {
 					logger.info("User created");
 					// Generate a JWT token for the newly registered user
-					const token = generate_token(user);
-					res.json(validate_response({ status: "success", data: { user, token } }));
+					const token = generateToken(user);
+					res.json(validateResponse({ status: "success", data: { user, token } }));
 				})
 				.catch((err) => {
-                    if (is_unique_constraint_violation(err)) {
+                    if (isUniqueConstraintViolation(err)) {
                         logger.warn("Username already exists");
                         // Handle duplicate entry (unique constraint violation)
-                        res.status(StatusCodes.CONFLICT).json(validate_response({ status: "error", error: "Username already exists" }));
+                        res.status(StatusCodes.CONFLICT).json(validateResponse({ status: "error", error: "Username already exists" }));
                     } else {
                         logger.error("Error creating user");
-                        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(validate_response({ status: "error", error: err.toString() }));
+                        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(validateResponse({ status: "error", error: err.toString() }));
                     }
 				});
 		});
 	});
 
-user_router
+userRouter
 	.route("/:id")
 	.get(async (req: Request, res: Response) => {
 		try {
-			const user_id = UserParamsSchema.parse(req.params).id;
-			const user = await User.query().findById(user_id);
+			const userId = UserParamsSchema.parse(req.params).id;
+			const user = await User.query().findById(userId);
 			if (!user) {
 				logger.error("User not found");
-				res.status(StatusCodes.NOT_FOUND).json(validate_response({ status: "error", error: "User not found" }));
+				res.status(StatusCodes.NOT_FOUND).json(validateResponse({ status: "error", error: "User not found" }));
 				return;
 			}
 			logger.info("User found");
-			res.json(validate_response({ status: "success", data: user }));
+			res.json(validateResponse({ status: "success", data: user }));
 		} catch (e) {
 			logger.error("Error getting user");
 			res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(
-				validate_response({
+				validateResponse({
 					status: "error",
 					error: (e as any).errors.toString(),
 				}),
@@ -85,7 +85,7 @@ user_router
 	})
 	.put(async (req: Request, res: Response, next: NextFunction) => {
 		try {
-			const user_id = UserParamsSchema.parse(req.params).id;
+			const userId = UserParamsSchema.parse(req.params).id;
 			const { username, password } = UserBodySchema.parse(req.body);
 			const salt = crypto.randomBytes(16);
 			crypto.pbkdf2(password, salt, 310000, 32, "sha256", (err, hashedPassword) => {
@@ -93,7 +93,7 @@ user_router
 					return next(err);
 				}
 				User.query()
-					.findById(user_id)
+					.findById(userId)
 					.patch({
 						username,
 						password: hashedPassword,
@@ -101,17 +101,17 @@ user_router
 					} as unknown as PartialModelObject<User>)
 					.then((user) => {
 						logger.info("User updated");
-						res.json(validate_response({ status: "success", data: user }));
+						res.json(validateResponse({ status: "success", data: user }));
 					})
 					.catch((err) => {
 						logger.error("Error updating user in db");
-						res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(validate_response({ status: "error", error: err.toString() }));
+						res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(validateResponse({ status: "error", error: err.toString() }));
 					});
 			});
 		} catch (e) {
 			logger.error("Error updating user");
 			res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(
-				validate_response({
+				validateResponse({
 					status: "error",
 					error: (e as any).errors.toString(),
 				}),
@@ -119,4 +119,4 @@ user_router
 		}
 	});
 
-export { user_router };
+export { userRouter };

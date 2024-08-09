@@ -4,7 +4,7 @@ import { Logger } from "../utils";
 
 const logger = new Logger("validator");
 
-export function validate_response(data: z.infer<typeof ApiResponseSchema>) {
+export function validateResponse(data: z.infer<typeof ApiResponseSchema>) {
 	try {
 		return ApiResponseSchema.parse(data);
 	} catch (e) {

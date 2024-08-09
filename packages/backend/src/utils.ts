@@ -5,33 +5,33 @@ import { ExtractJwt, type StrategyOptionsWithRequest } from "passport-jwt";
 import type { User } from "./models";
 
 export class Logger {
-	logger_name: string;
-	constructor(logger_name: string) {
-		this.logger_name = logger_name;
+	loggerName: string;
+	constructor(loggerName: string) {
+		this.loggerName = loggerName;
 	}
 	info(message: string) {
-		console.log(`[INFO] ${this.logger_name}: ${message}`);
+		console.log(`[INFO] ${this.loggerName}: ${message}`);
 	}
 	error(message: string) {
-		console.error(`[ERROR] ${this.logger_name}: ${message}`);
+		console.error(`[ERROR] ${this.loggerName}: ${message}`);
 	}
 	warn(message: string) {
-		console.warn(`[WARN] ${this.logger_name}: ${message}`);
+		console.warn(`[WARN] ${this.loggerName}: ${message}`);
 	}
 }
 
-export const strategy_options = {
+export const strategyOptions = {
 	jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 	secretOrKey: "secret", // replace with process.env.JWT_SECRET
 	passReqToCallback: true,
 } satisfies StrategyOptionsWithRequest;
 
-export function generate_token(user: User) {
-	return jwt.sign({ id: user.id }, strategy_options.secretOrKey, { expiresIn: "1h" });
+export function generateToken(user: User) {
+	return jwt.sign({ id: user.id }, strategyOptions.secretOrKey, { expiresIn: "1h" });
 }
 
-export function authenticate_jwt(req: Request, res: Response, next: NextFunction) {
+export function authenticateJwt(req: Request, res: Response, next: NextFunction) {
 	passport.authenticate("jwt", { session: false })(req, res, next);
 }
 
-export const is_unique_constraint_violation = (error: unknown) => error instanceof Error && error.name === "UniqueViolationError";
+export const isUniqueConstraintViolation = (error: unknown) => error instanceof Error && error.name === "UniqueViolationError";

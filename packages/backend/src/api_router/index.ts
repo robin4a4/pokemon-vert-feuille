@@ -1,12 +1,12 @@
 import { Router } from "express";
-import { auth_router } from "./auth_router";
-import { grid_router } from "./grid_router";
-import { user_router } from "./user_router";
+import { authRouter } from "./auth_router";
+import { gridRouter } from "./grid_router";
+import { userRouter } from "./user_router";
 
-const api_router = Router();
+const apiRouter = Router();
 
-api_router.use("/grids", grid_router);
-api_router.use("/users", user_router);
-api_router.use("/auth", auth_router);
+apiRouter.use("/grids", gridRouter);
+apiRouter.use("/users", userRouter);
+apiRouter.use("/auth", authRouter);
 
-export { api_router };
+export { apiRouter };
