@@ -37,10 +37,10 @@ export function useLoginMutation(type: "signup" | "login") {
 } ;
 
 export function useLogoutMutation() {
+    const navigate = useNavigate();
     return {
         mutate: () => {
-
-            const navigate = useNavigate();
+            console.log("Logging out");
             localStorage.removeItem(AUTH_TOKEN_KEY);
             navigate(AppRoute.LOGIN);
     }

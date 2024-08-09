@@ -31,6 +31,7 @@ auth_router.post("/login", (req, res, next) => {
 			username: req.body.username,
 			password: req.body.password,
 		});
+        console.log(username, password);
 		User.query()
 			.findOne({ username })
 			.then((user) => {
@@ -50,7 +51,7 @@ auth_router.post("/login", (req, res, next) => {
 						logger.error("Error hashing password");
 						return next(err);
 					}
-
+                    console.log(hashed_password, stored_hashed_password);
 					// Compare the hashed passwords
 					if (crypto.timingSafeEqual(hashed_password, Buffer.from(stored_hashed_password, "hex"))) {
 						logger.info("Passwords match");

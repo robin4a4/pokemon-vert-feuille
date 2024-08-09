@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { AppRoute, AUTH_TOKEN_KEY } from "../../consts";
 
 const isAuthenticated = () => {
