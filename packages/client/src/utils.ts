@@ -1,5 +1,6 @@
 import { ApiErrorSchema, type ApiSuccessSchema } from "shared/schema";
 import type { z } from "zod";
+import { AUTH_TOKEN_KEY } from "./consts";
 export function combineUrl(path1: string, path2: string) {
 	let firstPath = path1;
 	let secondPath = path2;
@@ -18,6 +19,11 @@ export async function fetchApi<TSchema extends typeof ApiSuccessSchema>(path: st
 		{
 			credentials: "include",
 			...options,
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem(AUTH_TOKEN_KEY)}`,
+                ...options?.headers,
+            },
 		},
 	);
 
