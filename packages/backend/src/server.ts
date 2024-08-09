@@ -3,7 +3,6 @@ import express, { type NextFunction } from "express";
 import { Model } from "objection";
 import knexfile from "../knexfile";
 import { apiRouter } from "./api_router";
-import { Logger } from "./utils";
 
 Model.knex(knexfile);
 

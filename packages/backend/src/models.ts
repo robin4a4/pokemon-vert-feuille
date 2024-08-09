@@ -2,8 +2,8 @@ import { type JSONSchema, Model, type ModelOptions, type QueryContext, type Stat
 
 class Base extends Model {
 	id!: number;
-	created_at!: Date;
-	updated_at!: Date;
+	created_at!: string;
+	updated_at!: string;
 
 	static override jsonSchema = {
 		type: "object",
@@ -17,8 +17,8 @@ class Base extends Model {
 	// Update the timestamp before updating a record
 	override async $beforeUpdate(opt: ModelOptions, queryContext: QueryContext) {
 		super.$beforeUpdate(opt, queryContext);
-		this.updated_at = new Date();
-	}
+		this.updated_at = new Date().toDateString();
+    }
 }
 
 export class User extends Base {

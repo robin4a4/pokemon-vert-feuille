@@ -6,7 +6,8 @@ import { Strategy as JwtStrategy } from "passport-jwt";
 import { User } from "../models";
 import { UserBodySchema } from "../schema";
 import { Logger, generateToken, strategyOptions } from "../utils";
-import { validateResponse } from "./validator";
+import { validateSuccessResponse, validateErrorResponse } from "shared/validator";
+import { TokenSchema, UserSchema } from "shared/schema";
 
 const authRouter = Router();
 const logger = new Logger("authRouter");
@@ -31,7 +32,6 @@ authRouter.post("/login", (req, res, next) => {
 			username: req.body.username,
 			password: req.body.password,
 		});
-        console.log(username, password);
 		User.query()
 			.findOne({ username })
 			.then((user) => {
@@ -39,7 +39,7 @@ authRouter.post("/login", (req, res, next) => {
 					logger.warn("User not found");
 					return res
 						.status(StatusCodes.NOT_FOUND)
-						.json(validateResponse({ status: "error", error: "User not found, did you forgot to register ?" }));
+						.json(validateErrorResponse({ status: "error", error: "User not found, did you forgot to register ?" }));
 				}
 
 				// Retrieve the stored salt and hashed password from the user record
@@ -56,16 +56,16 @@ authRouter.post("/login", (req, res, next) => {
 					if (crypto.timingSafeEqual(hashedPassword, bufferStoredPassword)) {
 						logger.info("Passwords match");
 						const token = generateToken(user);
-						res.json({ status: "success", data: token });
+						res.json(validateSuccessResponse({ status: "success", data: {token} }, TokenSchema));
 					} else {
 						logger.error("Passwords do not match");
-						res.status(StatusCodes.UNAUTHORIZED).json(validateResponse({ status: "error", error: "Invalid username or password" }));
+						res.status(StatusCodes.UNAUTHORIZED).json(validateErrorResponse({ status: "error", error: "Invalid username or password" }));
 					}
 				});
 			});
 	} catch (err) {
 		logger.error("Error logging in");
-		return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(validateResponse({ status: "error", error: err.toString() }));
+		return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(validateErrorResponse({ status: "error", error: (err as Error).message }));
 	}
 });
 

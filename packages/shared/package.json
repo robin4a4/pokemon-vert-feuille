@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "type": "module",
   "exports": {
-    "./schema": "./src/schema.ts"
+    "./schema": "./src/schema.ts",
+    "./validator": "./src/validator.ts"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

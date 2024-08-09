@@ -3,8 +3,9 @@ import { StatusCodes } from "http-status-codes";
 import type { PartialModelObject } from "objection";
 import { z } from "zod";
 import { Grid } from "../models";
-import { validateResponse } from "./validator";
+import { validateSuccessResponse, validateErrorResponse } from "shared/validator";
 import { Logger } from "../utils";
+import { GridSchema, GridsSchema } from "shared/schema";
 
 const logger = new Logger("gridRouter");
 
@@ -20,13 +21,22 @@ gridRouter
 	.get(async (req: Request, res: Response) => {
 		try {
 			const grids = await Grid.query();
-			res.json(validateResponse({ status: "success", data: grids }));
+			res.json(validateSuccessResponse({ status: "success", data: grids.map(grid => {
+                return {
+                    id: grid.id,
+                    name: grid.name,
+                    grid: grid.grid,
+                    userId: grid.userId,
+                    createdAt: grid.created_at,
+                    updatedAt: grid.updated_at,
+                };
+            }) }, GridsSchema));
 		} catch (e) {
             logger.error(`Error getting grids: ${e}`);
 			res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(
-				validateResponse({
+				validateErrorResponse({
 					status: "error",
-					error: JSON.stringify((e as any).errors),
+					error: (e as Error).message,
 				}),
 			);
 		}
@@ -39,10 +49,17 @@ gridRouter
 				grid,
 			} as unknown as PartialModelObject<Grid>)
 			.then((grid) => {
-				res.json(validateResponse({ status: "success", data: grid }));
+				res.json(validateSuccessResponse({ status: "success", data: {
+                    id: grid.id,
+                    name: grid.name,
+                    grid: grid.grid,
+                    userId: grid.userId,
+                    createdAt: grid.created_at,
+                    updatedAt: grid.updated_at,
+                } }, GridSchema));
 			})
 			.catch((err) => {
-				res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(validateResponse({ status: "error", error: err.toString() }));
+				res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(validateErrorResponse({ status: "error", error: (err as Error).message }));
 			});
 	});
 
@@ -61,15 +78,22 @@ gridRouter
 			const gridId = GridParamsSchema.parse(req.params).id;
 			const grid = await Grid.query().findById(gridId);
 			if (!grid) {
-				res.status(StatusCodes.NOT_FOUND).json(validateResponse({ status: "error", error: "Grid not found" }));
+				res.status(StatusCodes.NOT_FOUND).json(validateErrorResponse({ status: "error", error: "Grid not found" }));
 				return;
 			}
-			res.json(validateResponse({ status: "success", data: grid }));
+			res.json(validateSuccessResponse({ status: "success", data: {
+                id: grid.id,
+                name: grid.name,
+                grid: grid.grid,
+                userId: grid.userId,
+                createdAt: grid.created_at,
+                updatedAt: grid.updated_at,
+            } }, GridSchema));
 		} catch (e) {
 			res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(
-				validateResponse({
+				validateErrorResponse({
 					status: "error",
-					error: (e as any).errors.toString(),
+					error: (e as Error).message,
 				}),
 			);
 		}
@@ -84,10 +108,10 @@ gridRouter
 				grid,
 			} as unknown as PartialModelObject<Grid>)
 			.then((grid) => {
-				res.json(validateResponse({ status: "success", data: grid }));
+				res.json(validateSuccessResponse({ status: "success", data: {} }, z.object({})));
 			})
 			.catch((err) => {
-				res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(validateResponse({ status: "error", error: err.toString() }));
+				res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(validateErrorResponse({ status: "error", error: (err as Error).message }));
 			});
 	});
 

@@ -5,7 +5,9 @@ import type { PartialModelObject } from "objection";
 import { User } from "../models";
 import { UserBodySchema, UserParamsSchema } from "../schema";
 import { Logger, generateToken, isUniqueConstraintViolation } from "../utils";
-import { validateResponse } from "./validator";
+import { validateSuccessResponse, validateErrorResponse } from "shared/validator";
+import { TokenSchema, UserSchema, UsersSchema } from "shared/schema";
+import { z } from "zod";
 
 const userRouter = Router();
 
@@ -17,13 +19,22 @@ userRouter
 		try {
 			const users = await User.query();
 			logger.info("Users found");
-			res.json(validateResponse({ status: "success", data: users }));
+			res.json(validateSuccessResponse({ status: "success", data: users.map(
+                (user) => {
+                    return {
+                        id: user.id,
+                        username: user.username,
+                        createdAt: user.created_at,
+                        updatedAt: user.updated_at,
+                    };
+                }
+            ) }, UsersSchema));
 		} catch (e) {
 			logger.error("Error getting users");
 			res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(
-				validateResponse({
+				validateErrorResponse({
 					status: "error",
-					error: (e as any).errors.toString(),
+					error: (e as Error).message,
 				}),
 			);
 		}
@@ -45,16 +56,16 @@ userRouter
 					logger.info("User created");
 					// Generate a JWT token for the newly registered user
 					const token = generateToken(user);
-					res.json(validateResponse({ status: "success", data: { user, token } }));
+					res.json(validateSuccessResponse({ status: "success", data: { token } }, TokenSchema));
 				})
 				.catch((err) => {
                     if (isUniqueConstraintViolation(err)) {
                         logger.warn("Username already exists");
                         // Handle duplicate entry (unique constraint violation)
-                        res.status(StatusCodes.CONFLICT).json(validateResponse({ status: "error", error: "Username already exists" }));
+                        res.status(StatusCodes.CONFLICT).json(validateErrorResponse({ status: "error", error: "Username already exists" }));
                     } else {
                         logger.error("Error creating user");
-                        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(validateResponse({ status: "error", error: err.toString() }));
+                        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(validateErrorResponse({ status: "error", error: err.toString() }));
                     }
 				});
 		});
@@ -68,17 +79,22 @@ userRouter
 			const user = await User.query().findById(userId);
 			if (!user) {
 				logger.error("User not found");
-				res.status(StatusCodes.NOT_FOUND).json(validateResponse({ status: "error", error: "User not found" }));
+				res.status(StatusCodes.NOT_FOUND).json(validateErrorResponse({ status: "error", error: "User not found" }));
 				return;
 			}
 			logger.info("User found");
-			res.json(validateResponse({ status: "success", data: user }));
+			res.json(validateSuccessResponse({ status: "success", data: {
+                id: user.id,
+                username: user.username,
+                createdAt: user.created_at,
+                updatedAt: user.updated_at,
+            } }, UserSchema));
 		} catch (e) {
 			logger.error("Error getting user");
 			res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(
-				validateResponse({
+				validateErrorResponse({
 					status: "error",
-					error: (e as any).errors.toString(),
+					error: (e as Error).message,
 				}),
 			);
 		}
@@ -101,19 +117,19 @@ userRouter
 					} as unknown as PartialModelObject<User>)
 					.then((user) => {
 						logger.info("User updated");
-						res.json(validateResponse({ status: "success", data: user }));
+						res.json(validateSuccessResponse({ status: "success", data: {} }, z.object({})));
 					})
 					.catch((err) => {
 						logger.error("Error updating user in db");
-						res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(validateResponse({ status: "error", error: err.toString() }));
+						res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(validateErrorResponse({ status: "error", error: err.toString() }));
 					});
 			});
 		} catch (e) {
 			logger.error("Error updating user");
 			res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(
-				validateResponse({
+				validateErrorResponse({
 					status: "error",
-					error: (e as any).errors.toString(),
+					error: (e as Error).message,
 				}),
 			);
 		}
