@@ -4,7 +4,7 @@ import { StatusCodes } from "http-status-codes";
 import type { PartialModelObject } from "objection";
 import { User } from "../models";
 import { UserBodySchema, UserParamsSchema } from "../schema";
-import { Logger, generateToken } from "../utils";
+import { Logger, generate_token } from "../utils";
 import { validate_response } from "./validator";
 
 const user_router = Router();
@@ -44,7 +44,7 @@ user_router
 				.then((user) => {
 					logger.info("User created");
 					// Generate a JWT token for the newly registered user
-					const token = generateToken(user);
+					const token = generate_token(user);
 					res.json(validate_response({ status: "success", data: { user, token } }));
 				})
 				.catch((err) => {

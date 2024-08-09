@@ -26,10 +26,10 @@ export const strategy_options = {
 	passReqToCallback: true,
 } satisfies StrategyOptionsWithRequest;
 
-export function generateToken(user: User) {
+export function generate_token(user: User) {
 	return jwt.sign({ id: user.id }, strategy_options.secretOrKey, { expiresIn: "1h" });
 }
 
-export function authenticateJwt(req: Request, res: Response, next: NextFunction) {
+export function authenticate_jwt(req: Request, res: Response, next: NextFunction) {
 	passport.authenticate("jwt", { session: false })(req, res, next);
 }

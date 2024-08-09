@@ -5,7 +5,7 @@ import passport from "passport";
 import { Strategy as JwtStrategy } from "passport-jwt";
 import { User } from "../models";
 import { UserBodySchema } from "../schema";
-import { Logger, generateToken, strategy_options } from "../utils";
+import { Logger, generate_token, strategy_options } from "../utils";
 import { validate_response } from "./validator";
 
 const auth_router = Router();
@@ -44,18 +44,18 @@ auth_router.post("/login", (req, res, next) => {
 
 				// Retrieve the stored salt and hashed password from the user record
 				const { salt, password: stored_hashed_password } = user;
-
+                const buffer_salt = Buffer.from(salt, "hex");
+                const buffer_stored_password = Buffer.from(stored_hashed_password, "hex");
 				// Hash the provided password with the same salt
-				crypto.pbkdf2(password, salt, 310000, 32, "sha256", (err, hashed_password) => {
+				crypto.pbkdf2(password, buffer_salt, 310000, 32, "sha256", (err, hashed_password) => {
 					if (err) {
 						logger.error("Error hashing password");
 						return next(err);
 					}
-                    console.log(hashed_password, stored_hashed_password);
 					// Compare the hashed passwords
-					if (crypto.timingSafeEqual(hashed_password, Buffer.from(stored_hashed_password, "hex"))) {
+					if (crypto.timingSafeEqual(hashed_password, buffer_stored_password)) {
 						logger.info("Passwords match");
-						const token = generateToken(user);
+						const token = generate_token(user);
 						res.json({ status: "success", data: token });
 					} else {
 						logger.error("Passwords do not match");
