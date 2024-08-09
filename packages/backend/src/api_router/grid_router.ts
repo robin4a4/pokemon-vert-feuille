@@ -4,12 +4,13 @@ import type { PartialModelObject } from "objection";
 import { z } from "zod";
 import { Grid } from "../models";
 import { validateSuccessResponse, validateErrorResponse } from "shared/validator";
-import { Logger } from "../utils";
+import { authenticateJwt, Logger } from "../utils";
 import { GridSchema, GridsSchema } from "shared/schema";
 
 const logger = new Logger("gridRouter");
 
 const gridRouter = Router();
+gridRouter.use(authenticateJwt)
 
 const GridBodySchema = z.object({
 	grid: z.string(),
