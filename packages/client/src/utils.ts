@@ -1,5 +1,5 @@
-import { ApiResponseSchema } from "shared/schema";
-
+import { ApiErrorSchema, type ApiSuccessSchema } from "shared/schema";
+import type { z } from "zod";
 export function combineUrl(path1: string, path2: string) {
 	let firstPath = path1;
 	let secondPath = path2;
@@ -12,7 +12,7 @@ export function combineUrl(path1: string, path2: string) {
 	return `${firstPath}/${secondPath}`;
 }
 
-export async function fetchApi<TData>(path: string, options: RequestInit = {}) {
+export async function fetchApi<TSchema extends typeof ApiSuccessSchema>(path: string, schema: TSchema, options?: RequestInit) {
 	const response = await fetch(
 		combineUrl(import.meta.env.VITE_BASE_API_URL, path),
 		{
@@ -20,17 +20,29 @@ export async function fetchApi<TData>(path: string, options: RequestInit = {}) {
 			...options,
 		},
 	);
+
+    if (!response.ok) {
+        if (response.status === 401) {
+            window.location.href = "/login";
+            return;
+        }
+        try {
+            const parsedResponse = ApiErrorSchema.parse(await response.json());
+            if (parsedResponse.status === "error") {
+                throw new Error(parsedResponse.error);
+            }
+            throw new Error(
+                "An incorrect response was received from the server and passed the schema validation",
+            );
+        } catch (e) {
+            throw new Error(e as any);
+        }
+    }
+
 	try {
-		const parsedResponse = ApiResponseSchema.parse(await response.json());
-		if (!response.ok) {
-			if (parsedResponse.status === "error") {
-				throw new Error(parsedResponse.error);
-			}
-			throw new Error(
-				"An incorrect response was received from the server and passed the schema validation",
-			);
-		}
-		return parsedResponse.data as TData;
+		const parsedResponse = schema.parse(await response.json());
+        if ("data" in parsedResponse)
+		    return parsedResponse.data as z.infer<TSchema>;
 	} catch (e) {
 		throw new Error(e as any);
 	}
