@@ -1,4 +1,4 @@
-import { type JSONSchema, Model, type ModelOptions, type QueryContext, type StaticHookArguments } from "objection";
+import { type JSONSchema, Model, type ModelOptions, type QueryContext, type StaticHookArguments, ValidationError } from "objection";
 
 class Base extends Model {
 	id!: number;

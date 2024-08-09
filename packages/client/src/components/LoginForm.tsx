@@ -35,16 +35,16 @@ export function LoginForm({
 			>
 				<label>
 					<span>Username</span>
-					<TextInput name="username" placeholder="jean-michel" fullWidth />
+					<TextInput name="username" placeholder="jean-michel" fullWidth required />
 				</label>
 				<label>
 					<span>Password</span>
-					<TextInput name="password" type="password" fullWidth />
+					<TextInput name="password" type="password" fullWidth required/>
 				</label>
 				{type === "signup" && (
 					<label>
 						<span>Confirm password</span>
-						<TextInput name="confirm-password" type="password" fullWidth />
+						<TextInput name="confirm-password" type="password" fullWidth required />
 					</label>
 				)}
 				{loginMutation.status === "error" && (

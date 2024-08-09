@@ -4,7 +4,7 @@ import { StatusCodes } from "http-status-codes";
 import type { PartialModelObject } from "objection";
 import { User } from "../models";
 import { UserBodySchema, UserParamsSchema } from "../schema";
-import { Logger, generate_token } from "../utils";
+import { Logger, generate_token, is_unique_constraint_violation } from "../utils";
 import { validate_response } from "./validator";
 
 const user_router = Router();
@@ -48,8 +48,14 @@ user_router
 					res.json(validate_response({ status: "success", data: { user, token } }));
 				})
 				.catch((err) => {
-					logger.error("Error creating user");
-					res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(validate_response({ status: "error", error: err.toString() }));
+                    if (is_unique_constraint_violation(err)) {
+                        logger.warn("Username already exists");
+                        // Handle duplicate entry (unique constraint violation)
+                        res.status(StatusCodes.CONFLICT).json(validate_response({ status: "error", error: "Username already exists" }));
+                    } else {
+                        logger.error("Error creating user");
+                        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(validate_response({ status: "error", error: err.toString() }));
+                    }
 				});
 		});
 	});

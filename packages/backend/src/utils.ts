@@ -33,3 +33,5 @@ export function generate_token(user: User) {
 export function authenticate_jwt(req: Request, res: Response, next: NextFunction) {
 	passport.authenticate("jwt", { session: false })(req, res, next);
 }
+
+export const is_unique_constraint_violation = (error: unknown) => error instanceof Error && error.name === "UniqueViolationError";
