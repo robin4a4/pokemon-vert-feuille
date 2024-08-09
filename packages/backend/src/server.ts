@@ -3,6 +3,7 @@ import express, { type NextFunction } from "express";
 import { Model } from "objection";
 import knexfile from "../knexfile";
 import { apiRouter } from "./api_router";
+import passport from "passport";
 
 Model.knex(knexfile);
 
@@ -19,6 +20,7 @@ const loggerMiddleware = (req: Request, res: Response, next: NextFunction) => {
 app.use(express.json());
 
 app.use(loggerMiddleware);
+
 app.use(
 	cors({
 		origin: ["http://localhost:3000", "http://localhost:5173"],
@@ -27,12 +29,14 @@ app.use(
 		credentials: true,
 	}),
 );
-
+app.use(passport.initialize());
 app.options("*", cors());
 app.use(BASE_PATH, apiRouter);
 
-app.listen(port, () => {
-	console.log(`Server for map builder listening on port ${port}`);
-});
+if (process.env.NODE_ENV === 'production') {
+    app.listen(port, () => {
+        console.log(`Server for map builder listening on port ${port}`);
+    });
+  }
 
 export const viteNodeApp = app;

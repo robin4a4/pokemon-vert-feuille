@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { fetchApi } from "./utils";
 import { AppRoute, AUTH_TOKEN_KEY } from "./consts";
 import { useNavigate } from "react-router-dom";
+import { TokenSchema } from "shared/schema";
 
 export function useLoginMutation(type: "signup" | "login") {
     const navigate = useNavigate();
@@ -15,7 +16,7 @@ export function useLoginMutation(type: "signup" | "login") {
                 }
             }
             const apiPath = type === "login" ? "/auth/login" : "/users";
-            return fetchApi(apiPath, {
+            return fetchApi(apiPath, TokenSchema, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -27,8 +28,10 @@ export function useLoginMutation(type: "signup" | "login") {
             });
         },
         onSuccess: (data) => {
-            localStorage.setItem(AUTH_TOKEN_KEY, data as string);
-            navigate(AppRoute.DASHBOARD);
+             if (data) {
+                localStorage.setItem(AUTH_TOKEN_KEY, data.token);
+                navigate(AppRoute.DASHBOARD);
+            }
         },
         onError: () => {
             localStorage.removeItem(AUTH_TOKEN_KEY);

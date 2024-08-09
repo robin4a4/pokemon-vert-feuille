@@ -2,18 +2,21 @@ import crypto from "node:crypto";
 import { Router } from "express";
 import { StatusCodes } from "http-status-codes";
 import passport from "passport";
-import { Strategy as JwtStrategy } from "passport-jwt";
+import { ExtractJwt, Strategy as JwtStrategy, type StrategyOptions } from "passport-jwt";
 import { User } from "../models";
 import { UserBodySchema } from "../schema";
-import { Logger, generateToken, strategyOptions } from "../utils";
+import { Logger, generateToken } from "../utils";
 import { validateSuccessResponse, validateErrorResponse } from "shared/validator";
-import { TokenSchema, UserSchema } from "shared/schema";
+import { TokenSchema } from "shared/schema";
 
 const authRouter = Router();
 const logger = new Logger("authRouter");
 
 passport.use(
-	new JwtStrategy(strategyOptions, (jwtPayload, done) => {
+	new JwtStrategy({
+        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+        secretOrKey: __SECRET_TOKEN__,
+    }, (jwtPayload, done) => {
 		User.query()
 			.findById(jwtPayload.id)
 			.then((user) => {

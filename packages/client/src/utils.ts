@@ -1,6 +1,7 @@
 import { ApiErrorSchema, type ApiSuccessSchema } from "shared/schema";
 import type { z } from "zod";
 import { AUTH_TOKEN_KEY } from "./consts";
+
 export function combineUrl(path1: string, path2: string) {
 	let firstPath = path1;
 	let secondPath = path2;
@@ -30,7 +31,6 @@ export async function fetchApi<TSchema extends typeof ApiSuccessSchema>(path: st
     if (!response.ok) {
         if (response.status === 401) {
             window.location.href = "/login";
-            return;
         }
         try {
             const parsedResponse = ApiErrorSchema.parse(await response.json());
@@ -48,7 +48,9 @@ export async function fetchApi<TSchema extends typeof ApiSuccessSchema>(path: st
 	try {
 		const parsedResponse = schema.parse(await response.json());
         if ("data" in parsedResponse)
-		    return parsedResponse.data as z.infer<TSchema>;
+            //@ts-expect-error: TODO: find a way to add data to ApiSuccessSchema without breaking the rest of the code
+		    return parsedResponse.data as z.infer<TSchema>["data"];
+        throw new Error("Data not found in response");
 	} catch (e) {
 		throw new Error(e as any);
 	}

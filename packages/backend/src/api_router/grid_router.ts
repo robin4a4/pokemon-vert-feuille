@@ -21,7 +21,7 @@ gridRouter
 	.route("/")
 	.get(async (req: Request, res: Response) => {
 		try {
-			const grids = await Grid.query();
+			const grids = await Grid.query().where("userId", req.user.id);
 			res.json(validateSuccessResponse({ status: "success", data: grids.map(grid => {
                 return {
                     id: grid.id,

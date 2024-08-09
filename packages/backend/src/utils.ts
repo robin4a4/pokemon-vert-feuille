@@ -1,8 +1,10 @@
-import type { NextFunction } from "express";
+import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import passport from "passport";
-import { ExtractJwt, type StrategyOptionsWithRequest } from "passport-jwt";
+import { ExtractJwt, type StrategyOptions, type StrategyOptionsWithRequest } from "passport-jwt";
 import type { User } from "./models";
+import { StatusCodes } from "http-status-codes";
+import type { AuthenticatedRequest } from "./types";
 
 export class Logger {
 	loggerName: string;
@@ -20,14 +22,11 @@ export class Logger {
 	}
 }
 
-export const strategyOptions = {
-	jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-	secretOrKey: "secret", // replace with process.env.JWT_SECRET
-	passReqToCallback: true,
-} satisfies StrategyOptionsWithRequest;
-
 export function generateToken(user: User) {
-	return jwt.sign({ id: user.id }, strategyOptions.secretOrKey, { expiresIn: "1h" });
+    if (!user.id) {
+        throw new Error("User ID is missing when generating token");
+    }
+	return jwt.sign({ id: user.id }, __SECRET_TOKEN__, { expiresIn: "1h" });
 }
 
 export function authenticateJwt(req: Request, res: Response, next: NextFunction) {

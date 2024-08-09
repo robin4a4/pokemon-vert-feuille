@@ -11,6 +11,8 @@ import {
 } from "react95";
 import { DialogContent, DialogRoot, DialogTrigger } from "../components/Dialog";
 import { Shell } from "../components/Shell";
+import { redirect } from "react-router-dom";
+import { gridQueries } from "../queries";
 
 const CELL_SIZE = 18;
 
@@ -511,7 +513,7 @@ type Obj = {
 
 export const loader = (queryClient: QueryClient) => async () => {
 	try {
-		await queryClient.ensureQueryData(linksQueries.list());
+		await queryClient.ensureQueryData(gridQueries.detail("1"));
 		return true;
 	} catch (error) {
 		return redirect("/login");
