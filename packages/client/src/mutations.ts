@@ -2,7 +2,8 @@ import { useMutation } from "@tanstack/react-query";
 import { fetchApi } from "./utils";
 import { AppRoute, AUTH_TOKEN_KEY } from "./consts";
 import { useNavigate } from "react-router-dom";
-import { TokenSchema } from "shared/schema";
+import { TokenSchema, GridSchema } from "shared/schema";
+import { Grid } from "./types";
 
 export function useLoginMutation(type: "signup" | "login") {
     const navigate = useNavigate();
@@ -48,4 +49,15 @@ export function useLogoutMutation() {
             navigate(AppRoute.LOGIN);
     }
 }
+}
+
+export function useGridMutation() {
+    return useMutation({
+        mutationFn: async (grid: Omit<Grid, "id">) => {
+            return fetchApi("/grids", GridSchema, {
+                method: "POST",
+                body: JSON.stringify(grid),
+            });
+        },
+    });
 }

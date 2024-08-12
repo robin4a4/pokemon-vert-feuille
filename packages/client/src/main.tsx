@@ -12,11 +12,11 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 /* Original Windows95 font (optional) */
 import ms_sans_serif from "react95/dist/fonts/ms_sans_serif.woff2";
 import ms_sans_serif_bold from "react95/dist/fonts/ms_sans_serif_bold.woff2";
-import { Login } from "./routes/Login";
-import { MapBuilder } from "./routes/MapBuilder";
-import { Signup } from "./routes/Signup";
+import { LoginRoute } from "./routes/LoginRoute";
+import { MapBuilderRoute } from "./routes/MapBuilderRoute";
+import { SignupRoute } from "./routes/SignupRoute";
 import { AppRoute } from "./consts";
-import { Dashboard } from "./routes/Dashboard";
+import { DashboardRoute } from "./routes/DashboardRoute";
 import { PrivateRoute } from "./routes/utils/PrivateRoute";
 import "./main.css";
 
@@ -46,19 +46,25 @@ const GlobalStyles = createGlobalStyle`
 const router = createBrowserRouter([
     {
         path: AppRoute.DASHBOARD,
-        element: <PrivateRoute element={<Dashboard />}/>,
+        element: <PrivateRoute element={<DashboardRoute />}/>,
       },
 	{
 		path: AppRoute.MAP_BUILDER,
-		element: <MapBuilder />,
+		element: <MapBuilderRoute />,
+        children: [
+            {
+            path: ":gridId",
+            element: <MapBuilderRoute />
+            }
+        ]
 	},
 	{
 		path: AppRoute.LOGIN,
-		element: <Login />,
+		element: <LoginRoute />,
 	},
     {
 		path: AppRoute.SIGNUP,
-		element: <Signup />,
+		element: <SignupRoute />,
 	},
 ]);
 

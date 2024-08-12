@@ -1,5 +1,5 @@
 import { LoginForm } from "../components/LoginForm";
 
-export function Signup() {
+export function SignupRoute() {
 	return <LoginForm type="signup" />;
 }

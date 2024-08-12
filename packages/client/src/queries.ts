@@ -16,7 +16,7 @@ export const gridQueries = {
 			queryKey: ["grids"],
 			queryFn: () => fetchApi("/grids", GridsSchema),
 		}),
-	detail: (id: string) =>
+	detail: (id: number) =>
 		queryOptions({
 			queryKey: ["grids", id],
 			queryFn: async () => fetchApi(`/grids/${id}`, GridSchema),

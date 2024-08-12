@@ -14,7 +14,7 @@ export const loader = (queryClient: QueryClient) => async () => {
 	}
 };
 
-export function Dashboard() {
+export function DashboardRoute() {
     const navigate = useNavigate();
 	const { data: grids } = useSuspenseQuery(gridQueries.list());
 	return (

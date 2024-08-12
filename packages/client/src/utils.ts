@@ -55,3 +55,59 @@ export async function fetchApi<TSchema extends typeof ApiSuccessSchema>(path: st
 		throw new Error(e as any);
 	}
 }
+
+
+export const createRandomMapName = () => {
+    const adjectives = [
+        "Adventurous",
+        "Brave",
+        "Curious",
+        "Daring",
+        "Exciting",
+        "Fearless",
+        "Generous",
+        "Happy",
+        "Intelligent",
+        "Joyful",
+        "Kind",
+        "Lively",
+        "Magical",
+        "Nice",
+        "Optimistic",
+        "Playful",
+        "Quick",
+        "Reliable",
+        "Smart",
+        "Trustworthy",
+        "Unique",
+        "Valiant",
+        "Wise",
+        "Xenial",
+        "Young",
+        "Zealous",
+    ];
+    const nouns = [
+        "Antelope",
+        "Bear",
+        "Cat",
+        "Dog",
+        "Elephant",
+        "Fox",
+        "Giraffe",
+        "Horse",
+        "Iguana",
+        "Jaguar",
+        "Kangaroo",
+        "Lion",
+        "Monkey",
+        "Newt",
+        "Owl",
+        "Penguin",
+        "Quokka",
+        "Raccoon",
+        "Snake",
+    ]
+    const randomAdjective = adjectives[Math.floor(Math.random() * adjectives.length)];
+    const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
+    return `${randomAdjective}-${randomNoun}`;
+}

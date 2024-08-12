@@ -1,4 +1,4 @@
-import type { QueryClient } from "@tanstack/react-query";
+import { type QueryClient } from "@tanstack/react-query";
 import cn from "classnames";
 import { type SyntheticEvent, useState } from "react";
 import {
@@ -13,6 +13,10 @@ import { DialogContent, DialogRoot, DialogTrigger } from "../components/Dialog";
 import { Shell } from "../components/Shell";
 import { redirect } from "react-router-dom";
 import { gridQueries } from "../queries";
+import {useGridMutation} from "../mutations";
+import { createRandomMapName } from "../utils";
+import { GridSchema } from "shared/schema";
+import {z} from "zod";
 
 const CELL_SIZE = 18;
 
@@ -513,27 +517,31 @@ type Obj = {
 
 export const loader = (queryClient: QueryClient) => async () => {
 	try {
-		await queryClient.ensureQueryData(gridQueries.detail("1"));
+		await queryClient.ensureQueryData(gridQueries.detail(1));
 		return true;
 	} catch (error) {
 		return redirect("/login");
 	}
 };
 
-export function MapBuilder() {
-	const [currentTool, setCurrentTool] = useState<"brush" | "eraser">("brush");
+export function MapBuilder({initialGrid}: {initialGrid: z.infer<typeof GridSchema>["data"] | null}) {
+	const initialSprites = initialGrid ? JSON.parse(initialGrid.grid) : null;
+    const [currentTool, setCurrentTool] = useState<"brush" | "eraser">("brush");
 	const [brushSize, setBrushSize] = useState(1);
 	const [selectedObj, setSelectedObj] = useState<Obj>({
 		type: "sprite",
 		name: "sand-center.png",
 	});
+
 	const [grid, setGrid] = useState<Array<Array<{ sprite: string | null }>>>(
-		Array.from({ length: 40 }, () =>
-			Array.from({ length: 40 }, () => ({
+		initialSprites ?? Array.from({ length: 30 }, () =>
+			Array.from({ length: 30 }, () => ({
 				sprite: null,
 			})),
 		),
 	);
+
+    const gridMutation = useGridMutation();
 
 	const paintOnCell = (el: HTMLButtonElement) => {
 		if (!el) return;
@@ -598,7 +606,7 @@ export function MapBuilder() {
 		<div
 			className="flex flex-col justify-between gap-4 items-center"
 			style={{
-				height: "calc(100vh - 32px)",
+				height: "calc(100vh - 96px)",
 			}}
 		>
 			<Frame
@@ -742,7 +750,7 @@ export function MapBuilder() {
 						<DialogTrigger>
 							<MenuListItem as="button">All sprites</MenuListItem>
 						</DialogTrigger>
-						<DialogContent title="Settings">
+						<DialogContent title="Srites">
 							<div className="grid grid-cols-8 gap-1">
 								{[...SPRITES_REST].map((sprite, i) => {
 									const dataName = `sprites/${sprite.split("/").pop()}`;
@@ -872,6 +880,28 @@ export function MapBuilder() {
 							</GroupBox>
 						</DialogContent>
 					</DialogRoot>
+                    <MenuListItem as="button"
+                    onClick={() => gridMutation.mutate({
+                        name: createRandomMapName(),
+                        grid: JSON.stringify(grid),
+                    })}>
+                        Save
+                    </MenuListItem>
+                    <MenuListItem
+                        as="button"
+                        onClick={() => {
+                            const gridString = JSON.stringify(grid);
+                            const blob = new Blob([gridString], { type: "application/json" });
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement("a");
+                            a.href = url;
+                            a.download = "map.json";
+                            a.click();
+                            URL.revokeObjectURL(url);
+                        }}
+                    >
+                        Export
+                    </MenuListItem>
 				</MenuList>
 			</div>
 		</div>

@@ -14,14 +14,18 @@ gridRouter.use(authenticateJwt)
 
 const GridBodySchema = z.object({
 	grid: z.string(),
-	username: z.string(),
 });
 
 gridRouter
 	.route("/")
 	.get(async (req: Request, res: Response) => {
 		try {
-			const grids = await Grid.query().where("userId", req.user.id);
+            const user = req.user
+            if (!user) {
+                res.status(StatusCodes.UNAUTHORIZED).json(validateErrorResponse({ status: "error", error: "Unauthorized" }));
+                return;
+            }
+			const grids = await Grid.query().where("userId", user.id);
 			res.json(validateSuccessResponse({ status: "success", data: grids.map(grid => {
                 return {
                     id: grid.id,
@@ -42,14 +46,20 @@ gridRouter
 			);
 		}
 	})
-	.post((req: Request, res: Response, next: NextFunction) => {
-		const { username, grid } = GridBodySchema.parse(req.body);
+	.post((req: Request, res: Response) => {
+        const user = req.user
+        if (!user) {
+            res.status(StatusCodes.UNAUTHORIZED).json(validateErrorResponse({ status: "error", error: "Unauthorized" }));
+            return;
+        }
+		const { grid } = GridBodySchema.parse(req.body);
 		Grid.query()
 			.insert({
-				username,
+				user: user.username,
 				grid,
 			} as unknown as PartialModelObject<Grid>)
 			.then((grid) => {
+                logger.info(`Grid created: ${grid.id}`);
 				res.json(validateSuccessResponse({ status: "success", data: {
                     id: grid.id,
                     name: grid.name,
@@ -60,6 +70,7 @@ gridRouter
                 } }, GridSchema));
 			})
 			.catch((err) => {
+                logger.error(`Error creating grid: ${err}`);
 				res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(validateErrorResponse({ status: "error", error: (err as Error).message }));
 			});
 	});
@@ -101,11 +112,10 @@ gridRouter
 	})
 	.put(async (req: Request, res: Response, next: NextFunction) => {
 		const gridId = GridParamsSchema.parse(req.params).id;
-		const { username, grid } = GridBodySchema.parse(req.body);
+		const { grid } = GridBodySchema.parse(req.body);
 		Grid.query()
 			.findById(gridId)
 			.patch({
-				username,
 				grid,
 			} as unknown as PartialModelObject<Grid>)
 			.then((grid) => {
