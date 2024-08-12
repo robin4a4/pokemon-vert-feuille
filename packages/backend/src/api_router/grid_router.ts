@@ -2,7 +2,8 @@ import { type NextFunction, type Request, type Response, Router } from "express"
 import { StatusCodes } from "http-status-codes";
 import type { PartialModelObject } from "objection";
 import { z } from "zod";
-import { Grid } from "../models";
+import { Grid} from "../models/grid";
+import { User } from "../models/user";
 import { validateSuccessResponse, validateErrorResponse } from "shared/validator";
 import { authenticateJwt, Logger } from "../utils";
 import { GridSchema, GridsSchema } from "shared/schema";
@@ -13,6 +14,7 @@ const gridRouter = Router();
 gridRouter.use(authenticateJwt)
 
 const GridBodySchema = z.object({
+    name: z.string(),
 	grid: z.string(),
 });
 
@@ -26,6 +28,7 @@ gridRouter
                 return;
             }
 			const grids = await Grid.query().where("userId", user.id);
+            console.log(grids[0]?.id, grids[0]?.name, grids[0]?.created_at, grids[0]?.updated_at)
 			res.json(validateSuccessResponse({ status: "success", data: grids.map(grid => {
                 return {
                     id: grid.id,
@@ -52,14 +55,16 @@ gridRouter
             res.status(StatusCodes.UNAUTHORIZED).json(validateErrorResponse({ status: "error", error: "Unauthorized" }));
             return;
         }
-		const { grid } = GridBodySchema.parse(req.body);
-		Grid.query()
-			.insert({
-				user: user.username,
+		const { name, grid } = GridBodySchema.parse(req.body);
+		User.relatedQuery("grids").for(user.id).insert({
+                name,
 				grid,
-			} as unknown as PartialModelObject<Grid>)
+			})
 			.then((grid) => {
+                if (!(grid instanceof Grid))
+                    throw new Error("Error creating grid");
                 logger.info(`Grid created: ${grid.id}`);
+                console.log(grid.id, grid.name, grid.created_at, grid.updated_at)
 				res.json(validateSuccessResponse({ status: "success", data: {
                     id: grid.id,
                     name: grid.name,

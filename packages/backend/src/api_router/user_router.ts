@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import { type NextFunction, type Request, type Response, Router } from "express";
 import { StatusCodes } from "http-status-codes";
 import type { PartialModelObject } from "objection";
-import { User } from "../models";
+import { User } from "../models/user";
 import { UserBodySchema, UserParamsSchema } from "../schema";
 import { Logger, generateToken, isUniqueConstraintViolation } from "../utils";
 import { validateSuccessResponse, validateErrorResponse } from "shared/validator";

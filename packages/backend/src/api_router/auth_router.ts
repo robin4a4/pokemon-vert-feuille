@@ -3,7 +3,7 @@ import { Router } from "express";
 import { StatusCodes } from "http-status-codes";
 import passport from "passport";
 import { ExtractJwt, Strategy as JwtStrategy, type StrategyOptions } from "passport-jwt";
-import { User } from "../models";
+import { User } from "../models/user";
 import { UserBodySchema } from "../schema";
 import { Logger, generateToken } from "../utils";
 import { validateSuccessResponse, validateErrorResponse } from "shared/validator";

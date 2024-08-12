@@ -1,5 +1,5 @@
 import { type QueryClient, useSuspenseQuery } from "@tanstack/react-query";
-import { redirect, useNavigate } from "react-router-dom";
+import { Link, redirect, useNavigate } from "react-router-dom";
 import { Shell } from "../components/Shell";
 import { gridQueries } from "../queries";
 import { Button, Frame } from "react95";
@@ -32,10 +32,20 @@ export function DashboardRoute() {
                 <Button fullWidth onClick={() => navigate(AppRoute.MAP_BUILDER)}>Create a grid</Button>
                 </Frame>
 			) : (
-				<ul>
+				<ul className="flex items-center gap-4 !mt-16">
 					{grids.map((grid) => (
 						<li key={grid.id}>
-							<a href={`/grids/${grid.id}`}>{grid.name}</a>
+                            <Frame style={{
+                                padding: 16,
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: 16,
+                                alignItems: "center",
+                                justifyContent: "center"
+                            }}>
+                                {grid.name}
+                                <Button type="button" fullWidth onClick={() => navigate(`${AppRoute.MAP_BUILDER}/${grid.id}`)}>Open</Button>
+                            </Frame>
 						</li>
 					))}
 				</ul>

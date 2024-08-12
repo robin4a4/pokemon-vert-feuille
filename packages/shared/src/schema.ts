@@ -27,8 +27,8 @@ export const GridDataSchema = z.object({
     name: z.string(),
     grid: z.string(),
     userId: z.number(),
-    createdAt: z.string(),
-    updatedAt: z.string(),
+    createdAt: z.string().nullable(),
+    updatedAt: z.string().nullable(),
 });
 export const GridSchema = ApiSuccessSchema.extend({data: GridDataSchema});
 export const GridsSchema = ApiSuccessSchema.extend({data: z.array(GridDataSchema)});

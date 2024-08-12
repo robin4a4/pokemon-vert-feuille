@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { MapBuilder } from "../components/MapBuilder";
@@ -14,5 +15,5 @@ export function ExistingMapBuilderRoute({gridId}: {gridId: number}) {
 
 export function MapBuilderRoute() {
     const {gridId} = useParams()
-    return gridId ? <ExistingMapBuilderRoute gridId={Number.parseInt(gridId)} /> : <NewMapBuilderRoute />
+    return gridId ? <Suspense fallback="Loading..."><ExistingMapBuilderRoute gridId={Number.parseInt(gridId)} /></Suspense> : <NewMapBuilderRoute />
 }
