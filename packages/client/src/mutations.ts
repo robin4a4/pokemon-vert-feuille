@@ -1,10 +1,9 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { fetchApi } from "./utils";
 import { AppRoute, AUTH_TOKEN_KEY } from "./consts";
 import { useNavigate } from "react-router-dom";
 import { TokenSchema, GridSchema } from "shared/schema";
 import type { Grid } from "./types";
-import { gridQueries } from "./queries";
 
 export function useLoginMutation(type: "signup" | "login") {
     const navigate = useNavigate();

@@ -1,5 +1,5 @@
 import { type QueryClient, useSuspenseQuery } from "@tanstack/react-query";
-import { Link, redirect, useNavigate } from "react-router-dom";
+import { redirect, useNavigate } from "react-router-dom";
 import { Shell } from "../components/Shell";
 import { gridQueries } from "../queries";
 import { Button, Frame } from "react95";
