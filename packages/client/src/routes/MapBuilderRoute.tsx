@@ -10,7 +10,7 @@ export function NewMapBuilderRoute() {
 
 export function ExistingMapBuilderRoute({gridId}: {gridId: number}) {
     const {data: grid} = useSuspenseQuery(gridQueries.detail(gridId))
-    return <MapBuilder initialGrid={grid} />
+    return <MapBuilder initialGrid={grid} key={grid.grid} />
 }
 
 export function MapBuilderRoute() {

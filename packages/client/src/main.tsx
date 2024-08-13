@@ -7,7 +7,7 @@ import { ThemeProvider, createGlobalStyle } from "styled-components";
 /* Pick a theme of your choice */
 import original from "react95/dist/themes/original";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider, MutationCache } from "@tanstack/react-query";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 /* Original Windows95 font (optional) */
 import ms_sans_serif from "react95/dist/fonts/ms_sans_serif.woff2";
@@ -68,9 +68,19 @@ const router = createBrowserRouter([
 	},
 ]);
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient(
+    {
+        mutationCache: new MutationCache({
+            onSuccess: () => {
+              queryClient.invalidateQueries()
+            },
+          }),
+    }
+);
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
+const root = document.getElementById("root");
+if (root)
+ReactDOM.createRoot(root).render(
 	<React.StrictMode>
 		<GlobalStyles />
 		<QueryClientProvider client={queryClient}>

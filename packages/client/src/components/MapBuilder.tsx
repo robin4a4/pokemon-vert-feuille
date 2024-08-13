@@ -1,4 +1,4 @@
-import { type QueryClient } from "@tanstack/react-query";
+import type { QueryClient } from "@tanstack/react-query";
 import cn from "classnames";
 import { type SyntheticEvent, useState } from "react";
 import {
@@ -15,8 +15,7 @@ import { redirect } from "react-router-dom";
 import { gridQueries } from "../queries";
 import {useGridMutation} from "../mutations";
 import { createRandomMapName } from "../utils";
-import { GridSchema } from "shared/schema";
-import {z} from "zod";
+import type {Grid} from "../types";
 
 const CELL_SIZE = 18;
 
@@ -39,10 +38,9 @@ const SPRITES_REST = Object.values(
 	}),
 );
 
-console.log(SPRITES_REST);
 
 class SmallTree {
-	paint(prevGrid: Grid, row: number, col: number) {
+	paint(prevGrid: LocalGrid, row: number, col: number) {
 		const newGrid = [...prevGrid];
 		newGrid[row][col] = {
 			sprite: "structures/small-tree-0.png",
@@ -58,7 +56,7 @@ class SmallTree {
 }
 
 class MediumTree {
-	paint(prevGrid: Grid, row: number, col: number) {
+	paint(prevGrid: LocalGrid, row: number, col: number) {
 		const newGrid = [...prevGrid];
 		newGrid[row][col] = {
 			sprite: "structures/medium-tree-0-0.png",
@@ -85,7 +83,7 @@ class MediumTree {
 class Zone {
 	type: string | null = null;
 
-	paint(prevGrid: Grid, row: number, col: number, brushSize: number) {
+	paint(prevGrid: LocalGrid, row: number, col: number, brushSize: number) {
 		if (!this.type) return prevGrid;
 		const newGrid = [...prevGrid];
 		for (let i = row; i <= row + brushSize - 1; i++) {
@@ -473,9 +471,9 @@ class Grass extends Zone {
 	type = "grass";
 }
 
-type Grid = Array<Array<{ sprite: string | null }>>;
+type LocalGrid = Array<Array<{ sprite: string | null }>>;
 
-function erase(prevGrid: Grid, row: number, col: number, brushSize: number) {
+function erase(prevGrid: LocalGrid, row: number, col: number, brushSize: number) {
 	const newGrid = [...prevGrid];
 	for (let i = row; i <= row + brushSize - 1; i++) {
 		for (let j = col; j <= col + brushSize - 1; j++) {
@@ -490,7 +488,7 @@ function erase(prevGrid: Grid, row: number, col: number, brushSize: number) {
 }
 
 function paint(
-	prevGrid: Grid,
+	prevGrid: LocalGrid,
 	row: number,
 	col: number,
 	brushSize: number,
@@ -524,7 +522,7 @@ export const loader = (queryClient: QueryClient) => async () => {
 	}
 };
 
-export function MapBuilder({initialGrid}: {initialGrid: z.infer<typeof GridSchema>["data"] | null}) {
+export function MapBuilder({initialGrid}: {initialGrid: Grid | null}) {
 	const initialSprites = initialGrid ? JSON.parse(initialGrid.grid) : null;
     const [currentTool, setCurrentTool] = useState<"brush" | "eraser">("brush");
 	const [brushSize, setBrushSize] = useState(1);
@@ -882,6 +880,7 @@ export function MapBuilder({initialGrid}: {initialGrid: z.infer<typeof GridSchem
 					</DialogRoot>
                     <MenuListItem as="button"
                     onClick={() => gridMutation.mutate({
+                        id: initialGrid?.id ?? null,
                         name: createRandomMapName(),
                         grid: JSON.stringify(grid),
                     })}>

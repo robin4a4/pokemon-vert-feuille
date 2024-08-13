@@ -28,7 +28,6 @@ gridRouter
                 return;
             }
 			const grids = await Grid.query().where("userId", user.id);
-            console.log(grids[0]?.id, grids[0]?.name, grids[0]?.created_at, grids[0]?.updated_at)
 			res.json(validateSuccessResponse({ status: "success", data: grids.map(grid => {
                 return {
                     id: grid.id,
