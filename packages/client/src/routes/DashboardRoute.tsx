@@ -4,6 +4,7 @@ import { Shell } from "../components/Shell";
 import { gridQueries } from "../queries";
 import { Button, Frame } from "react95";
 import { AppRoute } from "../consts";
+import { Thumbnail } from "../components/Thumbnail";
 
 export const loader = (queryClient: QueryClient) => async () => {
 	try {
@@ -13,6 +14,8 @@ export const loader = (queryClient: QueryClient) => async () => {
 		return redirect("/login");
 	}
 };
+
+const THUMBNAIL_SIZE = 230;
 
 export function DashboardRoute() {
     const navigate = useNavigate();
@@ -41,13 +44,37 @@ export function DashboardRoute() {
                                 flexDirection: "column",
                                 gap: 16,
                                 alignItems: "center",
-                                justifyContent: "center"
+                                justifyContent: "space-between",
                             }}>
-                                {grid.name}
+                                <span style={{
+                                    fontSize: 24,
+                                }}>{grid.name}</span>
+                                <div style={{
+                                    width: `${THUMBNAIL_SIZE}px`,
+                                    minHeight: `${THUMBNAIL_SIZE}px`,
+                                    height: `${THUMBNAIL_SIZE}px`,
+                                    overflow: "hidden"
+                                }}>
+                                    <Thumbnail grid={grid.grid} />
+                                </div>
                                 <Button type="button" fullWidth onClick={() => navigate(`${AppRoute.MAP_BUILDER}/${grid.id}`)}>Open</Button>
                             </Frame>
 						</li>
 					))}
+                    <li>
+                        <Frame variant="button" style={{
+                            padding: 16,
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 16,
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width: "250px",
+                            height: "200px",
+                        }}>
+                            <Button type="button" fullWidth onClick={() => navigate(AppRoute.MAP_BUILDER)}>Create a grid</Button>
+                        </Frame>
+                        </li>
 				</ul>
 			)}
 		</Shell>

@@ -38,6 +38,7 @@ export function Shell({ children }: PropsWithChildren) {
 									position: "absolute",
 									left: "0",
 									top: "100%",
+                                    width: "160px",
 								}}
 								onClick={() => setOpen(false)}
 							>
@@ -55,7 +56,10 @@ export function Shell({ children }: PropsWithChildren) {
 									Dashboard
 								</MenuListItem>
 								<Separator />
-								<MenuListItem as="button" onClick={() => logoutMutation.mutate()}>
+								<MenuListItem as="button" onClick={() => logoutMutation.mutate()} style={{
+                                    justifyContent: "space-between",
+                                    width: "100%"
+                                }}>
 									<span role="img" aria-label="🔙">
 										🔙
 									</span>
