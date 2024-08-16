@@ -2,12 +2,12 @@ import crypto from "node:crypto";
 import { type NextFunction, type Request, type Response, Router } from "express";
 import { StatusCodes } from "http-status-codes";
 import type { PartialModelObject } from "objection";
+import { TokenSchema, UserSchema, UsersSchema } from "shared/schema";
+import { validateErrorResponse, validateSuccessResponse } from "shared/validator";
+import { z } from "zod";
 import { User } from "../models/user";
 import { UserBodySchema, UserParamsSchema } from "../schema";
 import { Logger, generateToken, isUniqueConstraintViolation } from "../utils";
-import { validateSuccessResponse, validateErrorResponse } from "shared/validator";
-import { TokenSchema, UserSchema, UsersSchema } from "shared/schema";
-import { z } from "zod";
 
 const userRouter = Router();
 
@@ -19,16 +19,22 @@ userRouter
 		try {
 			const users = await User.query();
 			logger.info("Users found");
-			res.json(validateSuccessResponse({ status: "success", data: users.map(
-                (user) => {
-                    return {
-                        id: user.id,
-                        username: user.username,
-                        createdAt: user.created_at,
-                        updatedAt: user.updated_at,
-                    };
-                }
-            ) }, UsersSchema));
+			res.json(
+				validateSuccessResponse(
+					{
+						status: "success",
+						data: users.map((user) => {
+							return {
+								id: user.id,
+								username: user.username,
+								createdAt: user.created_at,
+								updatedAt: user.updated_at,
+							};
+						}),
+					},
+					UsersSchema,
+				),
+			);
 		} catch (e) {
 			logger.error("Error getting users");
 			res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(
@@ -59,14 +65,14 @@ userRouter
 					res.json(validateSuccessResponse({ status: "success", data: { token } }, TokenSchema));
 				})
 				.catch((err) => {
-                    if (isUniqueConstraintViolation(err)) {
-                        logger.warn("Username already exists");
-                        // Handle duplicate entry (unique constraint violation)
-                        res.status(StatusCodes.CONFLICT).json(validateErrorResponse({ status: "error", error: "Username already exists" }));
-                    } else {
-                        logger.error("Error creating user");
-                        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(validateErrorResponse({ status: "error", error: err.toString() }));
-                    }
+					if (isUniqueConstraintViolation(err)) {
+						logger.warn("Username already exists");
+						// Handle duplicate entry (unique constraint violation)
+						res.status(StatusCodes.CONFLICT).json(validateErrorResponse({ status: "error", error: "Username already exists" }));
+					} else {
+						logger.error("Error creating user");
+						res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(validateErrorResponse({ status: "error", error: err.toString() }));
+					}
 				});
 		});
 	});
@@ -83,12 +89,20 @@ userRouter
 				return;
 			}
 			logger.info("User found");
-			res.json(validateSuccessResponse({ status: "success", data: {
-                id: user.id,
-                username: user.username,
-                createdAt: user.created_at,
-                updatedAt: user.updated_at,
-            } }, UserSchema));
+			res.json(
+				validateSuccessResponse(
+					{
+						status: "success",
+						data: {
+							id: user.id,
+							username: user.username,
+							createdAt: user.created_at,
+							updatedAt: user.updated_at,
+						},
+					},
+					UserSchema,
+				),
+			);
 		} catch (e) {
 			logger.error("Error getting user");
 			res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(

@@ -3,29 +3,32 @@ import { Router } from "express";
 import { StatusCodes } from "http-status-codes";
 import passport from "passport";
 import { ExtractJwt, Strategy as JwtStrategy, type StrategyOptions } from "passport-jwt";
+import { TokenSchema } from "shared/schema";
+import { validateErrorResponse, validateSuccessResponse } from "shared/validator";
 import { User } from "../models/user";
 import { UserBodySchema } from "../schema";
 import { Logger, generateToken } from "../utils";
-import { validateSuccessResponse, validateErrorResponse } from "shared/validator";
-import { TokenSchema } from "shared/schema";
 
 const authRouter = Router();
 const logger = new Logger("authRouter");
 
 passport.use(
-	new JwtStrategy({
-        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-        secretOrKey: __SECRET_TOKEN__,
-    }, (jwtPayload, done) => {
-		User.query()
-			.findById(jwtPayload.id)
-			.then((user) => {
-				if (!user) {
-					return done(null, false, { message: "Incorrect username or password." });
-				}
-				return done(null, user);
-			});
-	}),
+	new JwtStrategy(
+		{
+			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+			secretOrKey: __SECRET_TOKEN__,
+		},
+		(jwtPayload, done) => {
+			User.query()
+				.findById(jwtPayload.id)
+				.then((user) => {
+					if (!user) {
+						return done(null, false, { message: "Incorrect username or password." });
+					}
+					return done(null, user);
+				});
+		},
+	),
 );
 
 authRouter.post("/login", (req, res, next) => {
@@ -47,8 +50,8 @@ authRouter.post("/login", (req, res, next) => {
 
 				// Retrieve the stored salt and hashed password from the user record
 				const { salt, password: storedHashedPassword } = user;
-                const bufferSalt = Buffer.from(salt, "hex");
-                const bufferStoredPassword = Buffer.from(storedHashedPassword, "hex");
+				const bufferSalt = Buffer.from(salt, "hex");
+				const bufferStoredPassword = Buffer.from(storedHashedPassword, "hex");
 				// Hash the provided password with the same salt
 				crypto.pbkdf2(password, bufferSalt, 310000, 32, "sha256", (err, hashedPassword) => {
 					if (err) {
@@ -59,7 +62,7 @@ authRouter.post("/login", (req, res, next) => {
 					if (crypto.timingSafeEqual(hashedPassword, bufferStoredPassword)) {
 						logger.info("Passwords match");
 						const token = generateToken(user);
-						res.json(validateSuccessResponse({ status: "success", data: {token} }, TokenSchema));
+						res.json(validateSuccessResponse({ status: "success", data: { token } }, TokenSchema));
 					} else {
 						logger.error("Passwords do not match");
 						res.status(StatusCodes.UNAUTHORIZED).json(validateErrorResponse({ status: "error", error: "Invalid username or password" }));

@@ -18,5 +18,5 @@ export class Base extends Model {
 	override async $beforeUpdate(opt: ModelOptions, queryContext: QueryContext) {
 		super.$beforeUpdate(opt, queryContext);
 		this.updated_at = new Date().toDateString();
-    }
+	}
 }

@@ -7,7 +7,9 @@
     "dev": "vite",
     "knex": "tsx knex-cli.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "npx @biomejs/biome check --write ./src"
+    "lint": "npx @biomejs/biome check --write ./src",
+    "build": "tsc",
+    "start": "node dist/server.js"
   },
   "author": "",
   "license": "ISC",

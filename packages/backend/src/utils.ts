@@ -1,10 +1,7 @@
-import type { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import passport from "passport";
-import { ExtractJwt, type StrategyOptions, type StrategyOptionsWithRequest } from "passport-jwt";
-import type { User } from "./models";
-import { StatusCodes } from "http-status-codes";
-import type { AuthenticatedRequest } from "./types";
+import type { User } from "./models/user";
 
 export class Logger {
 	loggerName: string;
@@ -23,9 +20,9 @@ export class Logger {
 }
 
 export function generateToken(user: User) {
-    if (!user.id) {
-        throw new Error("User ID is missing when generating token");
-    }
+	if (!user.id) {
+		throw new Error("User ID is missing when generating token");
+	}
 	return jwt.sign({ id: user.id }, __SECRET_TOKEN__, { expiresIn: "1h" });
 }
 

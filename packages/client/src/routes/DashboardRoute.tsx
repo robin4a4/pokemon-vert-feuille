@@ -69,8 +69,6 @@ export function DashboardRoute() {
                             gap: 16,
                             alignItems: "center",
                             justifyContent: "center",
-                            width: "250px",
-                            height: "200px",
                         }}>
                             <Button type="button" fullWidth onClick={() => navigate(AppRoute.MAP_BUILDER)}>Create a grid</Button>
                         </Frame>

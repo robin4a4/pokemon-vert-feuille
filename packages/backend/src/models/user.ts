@@ -22,14 +22,14 @@ export class User extends Base {
 		} satisfies JSONSchema;
 	}
 
-    static override relationMappings = {
-        grids: {
-            relation: Model.HasManyRelation,
-            modelClass: Grid,
-            join: {
-                from: "users.id",
-                to: "grids.userId",
-            },
-        },
-    };
+	static override relationMappings = {
+		grids: {
+			relation: Model.HasManyRelation,
+			modelClass: Grid,
+			join: {
+				from: "users.id",
+				to: "grids.userId",
+			},
+		},
+	};
 }

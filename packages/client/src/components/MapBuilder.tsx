@@ -15,7 +15,7 @@ import { redirect } from "react-router-dom";
 import { gridQueries } from "../queries";
 import {useGridMutation} from "../mutations";
 import { createRandomMapName } from "../utils";
-import type {Grid} from "../types";
+import type {Grid, LocalGrid} from "../types";
 
 const CELL_SIZE = 18;
 
@@ -470,8 +470,6 @@ class Water extends Zone {
 class Grass extends Zone {
 	type = "grass";
 }
-
-type LocalGrid = Array<Array<{ sprite: string | null }>>;
 
 function erase(prevGrid: LocalGrid, row: number, col: number, brushSize: number) {
 	const newGrid = [...prevGrid];
