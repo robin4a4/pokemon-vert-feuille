@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import { Router } from "express";
 import { StatusCodes } from "http-status-codes";
 import passport from "passport";
-import { ExtractJwt, Strategy as JwtStrategy, type StrategyOptions } from "passport-jwt";
+import { ExtractJwt, Strategy as JwtStrategy } from "passport-jwt";
 import { TokenSchema } from "shared/schema";
 import { validateErrorResponse, validateSuccessResponse } from "shared/validator";
 import { User } from "../models/user";

@@ -1,7 +1,6 @@
 import { type JSONSchema, Model } from "objection";
 
 import { Base } from "./base";
-import { User } from "./user";
 
 export class Grid extends Base {
 	name!: string;
@@ -24,14 +23,17 @@ export class Grid extends Base {
 		} satisfies JSONSchema;
 	}
 
-	static override relationMappings = {
-		user: {
-			relation: Model.BelongsToOneRelation,
-			modelClass: User,
-			join: {
-				from: "grids.userId",
-				to: "users.id",
-			},
-		},
-	};
+	static override get relationMappings() {
+        const userModule = require("./user");
+            return {
+                user: {
+                relation: Model.BelongsToOneRelation,
+                modelClass: userModule.User,
+                join: {
+                    from: "grids.userId",
+                    to: "users.id",
+                },
+            },
+        };
+    }
 }
