@@ -9,7 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "npx @biomejs/biome check --write ./src",
     "build": "vite build",
-    "start": "node dist/server.js"
+    "start": "NODE_ENV=production node dist/server.js"
   },
   "author": "",
   "license": "ISC",
