@@ -3,9 +3,9 @@ FROM node:18-alpine
 # Set the working directory inside the container
 WORKDIR /app
 
-COPY dist ./dist
-COPY package*.json ./
-COPY migrations ./migrations
+COPY dist dist
+COPY package*.json .
+COPY migrations migrations
 
 # Install production dependencies only
 RUN npm install --production
