@@ -3,7 +3,6 @@ FROM node:18-alpine
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy only the build output and necessary files
 COPY dist ./dist
 COPY package*.json ./
 COPY migrations ./migrations
